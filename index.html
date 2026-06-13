@@ -57,24 +57,42 @@
   <main>
     <section id="gallery" class="gallery-section">
       <div class="gallery-toolbar" id="gallery-toolbar">
-        <div class="toolbar-row">
+        <div class="toolbar-compact">
           <div class="search-wrap">
             <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
               <path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
             <label for="search" class="visually-hidden">Search prompts</label>
-            <input type="search" id="search" placeholder="Search prompts and tags…" autocomplete="off">
+            <input type="search" id="search" placeholder="Search prompts…" autocomplete="off">
             <button type="button" class="search-clear" id="search-clear" aria-label="Clear search" hidden>&times;</button>
           </div>
 
-          <div class="toolbar-actions">
+          <div class="toolbar-compact-actions">
             <div class="filter-group" role="group" aria-label="Filter by media type">
               <button class="filter-btn active" data-filter="all">All</button>
-              <button class="filter-btn" data-filter="image">Images</button>
-              <button class="filter-btn" data-filter="video">Videos</button>
+              <button class="filter-btn" data-filter="image"><span class="label-full">Images</span><span class="label-short">Img</span></button>
+              <button class="filter-btn" data-filter="video"><span class="label-full">Videos</span><span class="label-short">Vid</span></button>
             </div>
 
+            <button
+              type="button"
+              class="toolbar-toggle"
+              id="toolbar-toggle"
+              aria-expanded="false"
+              aria-controls="toolbar-panel"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 7h16M7 12h10M10 17h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span class="toolbar-toggle-label">More</span>
+              <span class="toolbar-toggle-badge" id="toolbar-toggle-badge" hidden></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="toolbar-panel toolbar-panel--collapsed" id="toolbar-panel">
+          <div class="toolbar-row-secondary">
             <label class="sort-wrap">
               <span class="visually-hidden">Sort by</span>
               <select id="sort" aria-label="Sort prompts">
@@ -91,18 +109,19 @@
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="1" y="2" width="14" height="2.5" rx="1"/><rect x="1" y="7" width="14" height="2.5" rx="1"/><rect x="1" y="12" width="14" height="2.5" rx="1"/></svg>
               </button>
             </div>
+
+            <p class="result-count" id="result-count" aria-live="polite"></p>
           </div>
-        </div>
 
-        <div class="toolbar-meta">
-          <div id="tag-filters" class="tag-filters" aria-label="Filter by tag"></div>
-          <p class="result-count" id="result-count" aria-live="polite"></p>
-        </div>
+          <div class="toolbar-meta">
+            <div id="tag-filters" class="tag-filters" aria-label="Filter by tag"></div>
+          </div>
 
-        <div id="active-filters" class="active-filters" hidden>
-          <span class="active-filters-label">Active:</span>
-          <div id="filter-chips" class="filter-chips"></div>
-          <button type="button" class="clear-filters" id="clear-filters">Clear all</button>
+          <div id="active-filters" class="active-filters" hidden>
+            <span class="active-filters-label">Active:</span>
+            <div id="filter-chips" class="filter-chips"></div>
+            <button type="button" class="clear-filters" id="clear-filters">Clear all</button>
+          </div>
         </div>
       </div>
 

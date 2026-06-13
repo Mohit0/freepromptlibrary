@@ -1,8 +1,22 @@
+# Opens a PR automatically when someone submits the Prompt Submission issue form.
+#
+# How to use:
+#   1. Repo → Issues → New issue → "Prompt Submission"
+#   2. Or: https://github.com/Mohit0/freepromptlibrary/issues/new?template=prompt-submission.yml
+#   3. Attach image/video, submit — this workflow runs automatically
+#
+# Manual retry: Actions → "Create PR from prompt submission" → Run workflow → enter issue #
 name: Create PR from prompt submission
 
 on:
   issues:
-    types: [opened, edited]
+    types: [opened, edited, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Issue number to process (for retry after fixing a submission)
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -10,12 +24,15 @@ permissions:
   issues: write
 
 concurrency:
-  group: submission-${{ github.event.issue.number }}
+  group: submission-${{ github.event.issue.number || github.event.inputs.issue_number }}
   cancel-in-progress: true
 
 jobs:
   create-pr:
-    if: contains(github.event.issue.labels.*.name, 'prompt-submission')
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.issue.labels.*.name, 'prompt-submission') ||
+      startsWith(github.event.issue.title, 'Prompt:')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,7 +47,7 @@ jobs:
         id: process
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || github.event.inputs.issue_number }}
         run: node scripts/process-issue-submission.js
 
       - name: Create pull request
@@ -40,11 +57,11 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Add prompt: ${{ steps.process.outputs.entry_title }}"
-          branch: submission/issue-${{ github.event.issue.number }}
+          branch: submission/issue-${{ github.event.issue.number || github.event.inputs.issue_number }}
           delete-branch: true
           title: "Add prompt: ${{ steps.process.outputs.entry_title }}"
           body: |
-            Automated submission from issue #${{ github.event.issue.number }} by @${{ github.event.issue.user.login }}.
+            Automated submission from issue #${{ github.event.issue.number || github.event.inputs.issue_number }}.
 
             **Review checklist**
             - [ ] Prompt text matches the attached output
@@ -52,11 +69,11 @@ jobs:
             - [ ] Tags are relevant
             - [ ] Contributor attribution is correct
 
-            Closes #${{ github.event.issue.number }}
+            Closes #${{ github.event.issue.number || github.event.inputs.issue_number }}
           labels: submission
 
       - name: Comment on issue
-        if: steps.cpr.outputs.pull-request-number
+        if: steps.cpr.outputs.pull-request-number && github.event_name != 'workflow_dispatch'
         uses: actions/github-script@v7
         with:
           script: |

@@ -33,6 +33,9 @@ const els = {
   activeFilters: document.getElementById("active-filters"),
   filterChips: document.getElementById("filter-chips"),
   clearFilters: document.getElementById("clear-filters"),
+  toolbarPanel: document.getElementById("toolbar-panel"),
+  toolbarToggle: document.getElementById("toolbar-toggle"),
+  toolbarToggleBadge: document.getElementById("toolbar-toggle-badge"),
   modal: document.getElementById("detail-modal"),
   modalPrev: document.getElementById("modal-prev"),
   modalNext: document.getElementById("modal-next"),
@@ -116,6 +119,19 @@ function renderFilterChips() {
         `<button class="filter-chip" data-chip-type="${chip.type}" data-chip-value="${escapeHtml(chip.value)}">${escapeHtml(chip.label)} <span aria-hidden="true">×</span></button>`
     )
     .join("");
+  updateToolbarBadge(chips.length);
+}
+
+function updateToolbarBadge(activeCount) {
+  if (!els.toolbarToggleBadge) return;
+  const badgeCount =
+    activeCount + (state.sort !== "default" ? 1 : 0) + (state.view !== "grid" ? 1 : 0);
+  if (badgeCount > 0 && window.matchMedia("(max-width: 768px)").matches) {
+    els.toolbarToggleBadge.hidden = false;
+    els.toolbarToggleBadge.textContent = String(badgeCount);
+  } else {
+    els.toolbarToggleBadge.hidden = true;
+  }
 }
 
 function updateResultCount(count) {
@@ -385,6 +401,33 @@ function bindMobileNav() {
   });
 }
 
+function bindToolbarPanel() {
+  const panel = els.toolbarPanel;
+  const toggle = els.toolbarToggle;
+  if (!panel || !toggle) return;
+
+  const mobileQuery = window.matchMedia("(max-width: 768px)");
+
+  const syncLayout = () => {
+    if (mobileQuery.matches) {
+      panel.classList.add("toolbar-panel--collapsed");
+      toggle.setAttribute("aria-expanded", "false");
+    } else {
+      panel.classList.remove("toolbar-panel--collapsed");
+      toggle.setAttribute("aria-expanded", "true");
+    }
+  };
+
+  syncLayout();
+  mobileQuery.addEventListener("change", syncLayout);
+
+  toggle.addEventListener("click", () => {
+    if (!mobileQuery.matches) return;
+    const collapsed = panel.classList.toggle("toolbar-panel--collapsed");
+    toggle.setAttribute("aria-expanded", String(!collapsed));
+  });
+}
+
 function bindEvents() {
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -502,6 +545,7 @@ function bindEvents() {
   });
 
   bindMobileNav();
+  bindToolbarPanel();
 }
 
 async function init() {

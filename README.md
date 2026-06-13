@@ -8,12 +8,16 @@ https://mohit0.github.io/freepromptlibrary/
 
 ## Submit a prompt (no git required)
 
-1. Open the [submission form](https://github.com/Mohit0/freepromptlibrary/issues/new?template=prompt-submission.yml) on GitHub (works on mobile)
-2. Fill in the fields and attach your image or video
-3. Submit — a pull request is created automatically
-4. Review and merge when ready
+1. Open the **[submission form](https://github.com/Mohit0/freepromptlibrary/issues/new?template=prompt-submission.yml)** on GitHub (works on mobile)
+2. Fill in the fields and **attach your image or video** (paperclip button)
+3. Submit the issue — the workflow **[Create PR from prompt submission](https://github.com/Mohit0/freepromptlibrary/actions/workflows/create-pr-from-issue.yml)** runs automatically
+4. Review and merge the PR when ready
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+> **Can't see the workflow?** It only runs after an issue is submitted. Go to **Actions** in the repo and click **Create PR from prompt submission** in the left sidebar. You can also use **Run workflow** there to retry a failed submission by issue number.
+
+### One-time repo setup (maintainers)
+
+In **Settings → Actions → General → Workflow permissions**, choose **Read and write permissions** so the workflow can open pull requests.
 
 ## Local preview
 
