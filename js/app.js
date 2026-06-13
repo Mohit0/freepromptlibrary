@@ -298,11 +298,15 @@ function openFromUrl() {
   const inFiltered = state.filtered.some((i) => i.id === id);
   if (!inFiltered) {
     clearAllFilters();
-    state.filtered = sortItems(getFilteredItems());
+    if (!state.filtered.some((i) => i.id === id)) return;
   }
 
-  openModal(item);
-  document.getElementById("gallery")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  try {
+    openModal(item);
+    document.getElementById("gallery")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    console.error("Failed to open prompt from URL:", error);
+  }
 }
 
 function navigateModal(direction) {
@@ -324,7 +328,7 @@ function clearAllFilters() {
   state.search = "";
   state.activeTag = null;
   els.search.value = "";
-  els.searchClear.hidden = true;
+  if (els.searchClear) els.searchClear.hidden = true;
   document.querySelectorAll(".filter-btn").forEach((b) => {
     b.classList.toggle("active", b.dataset.filter === "all");
   });
@@ -343,15 +347,30 @@ function removeFilterChip(type) {
     renderTagFilters(getAllTags(state.items));
   } else if (type === "search") {
     state.search = "";
-    els.search.value = "";
-    els.searchClear.hidden = true;
+    if (els.search) els.search.value = "";
+    if (els.searchClear) els.searchClear.hidden = true;
   }
   renderGallery();
 }
 
 function setLoading(loading) {
   if (els.loading) els.loading.setAttribute("aria-hidden", String(!loading));
-  if (els.grid) els.grid.hidden = loading;
+  if (loading && els.grid) els.grid.hidden = true;
+}
+
+function showLoadError(error) {
+  console.error("Gallery init failed:", error);
+  if (els.grid) {
+    els.grid.innerHTML = "";
+    els.grid.hidden = true;
+  }
+  if (els.empty) {
+    const title = els.empty.querySelector("h3");
+    const message = els.empty.querySelector("p");
+    if (title) title.textContent = "Unable to load prompts";
+    if (message) message.textContent = "Please refresh the page or check back later.";
+    els.empty.hidden = false;
+  }
 }
 
 function bindMobileNav() {
@@ -486,22 +505,24 @@ function bindEvents() {
 }
 
 async function init() {
-  try {
-    setLoading(true);
-    state.items = await loadPrompts();
-    renderTagFilters(getAllTags(state.items));
-    renderGallery();
-    bindEvents();
-    openFromUrl();
+  setLoading(true);
 
-    if (window.location.hash === "#gallery") {
-      document.getElementById("gallery")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+  try {
+    state.items = await loadPrompts();
   } catch (error) {
-    console.error("Gallery init failed:", error);
-    els.grid.innerHTML = `<p class="empty-state">Unable to load prompts. Please refresh the page or check back later.</p>`;
+    showLoadError(error);
+    return;
   } finally {
     setLoading(false);
+  }
+
+  renderTagFilters(getAllTags(state.items));
+  renderGallery();
+  bindEvents();
+  openFromUrl();
+
+  if (window.location.hash === "#gallery") {
+    document.getElementById("gallery")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
 

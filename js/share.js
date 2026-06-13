@@ -3,6 +3,7 @@ const SITE_ROOT = new URL("../", import.meta.url);
 const RESERVED_HASHES = new Set(["gallery"]);
 
 let cachedSiteRoot = null;
+let cachedPrompts = null;
 
 export function getSiteRoot() {
   if (cachedSiteRoot) return cachedSiteRoot;
@@ -71,32 +72,81 @@ export function renderMedia(item, { autoplay = false, className = "" } = {}) {
   return `<img src="${src}" alt="${escapeHtml(item.title)}"${cls} loading="lazy">`;
 }
 
-export async function loadPrompts() {
-  const bundleUrl = new URL("./prompts-data.js", import.meta.url).href;
-  const jsonUrl = new URL("../data/prompts.json", import.meta.url).href;
+function normalizePromptItems(items) {
+  return Array.isArray(items) ? items : null;
+}
+
+function readInlinePrompts() {
+  const globalItems = normalizePromptItems(window.__PROMPTS_DATA__?.items);
+  if (globalItems?.length) return globalItems;
+
+  const inline = document.getElementById("prompts-inline");
+  if (!inline?.textContent?.trim()) return null;
 
   try {
-    const module = await import(bundleUrl);
-    if (Array.isArray(module.default?.items)) {
-      return module.default.items;
-    }
+    const data = JSON.parse(inline.textContent);
+    return normalizePromptItems(data.items);
   } catch (error) {
-    console.warn("Bundled prompts unavailable, using JSON fallback.", error);
+    console.warn("Inline prompt data is invalid.", error);
+    return null;
+  }
+}
+
+function getPromptJsonUrls() {
+  const urls = new Set([
+    new URL("../data/prompts.json", import.meta.url).href,
+    resolveSitePath("data/prompts.json"),
+  ]);
+
+  const dataScript = document.querySelector('script[src*="prompts-data.js"]');
+  if (dataScript?.src) {
+    urls.add(new URL("../data/prompts.json", dataScript.src).href);
   }
 
-  const response = await fetch(jsonUrl);
+  return [...urls];
+}
+
+async function fetchPromptItems(url) {
+  const response = await fetch(url, { cache: "no-store" });
 
   if (!response.ok) {
-    throw new Error(`Failed to load prompts (${response.status}) from ${jsonUrl}`);
+    throw new Error(`Failed to load prompts (${response.status}) from ${url}`);
   }
 
   const data = await response.json();
+  const items = normalizePromptItems(data.items);
 
-  if (!Array.isArray(data.items)) {
+  if (!items) {
     throw new Error('prompts.json must contain an "items" array');
   }
 
-  return data.items;
+  return items;
+}
+
+export async function loadPrompts() {
+  if (cachedPrompts) return cachedPrompts;
+
+  const inlineItems = readInlinePrompts();
+  if (inlineItems?.length) {
+    cachedPrompts = inlineItems;
+    return cachedPrompts;
+  }
+
+  let lastError = null;
+  for (const url of getPromptJsonUrls()) {
+    try {
+      const items = await fetchPromptItems(url);
+      if (items.length) {
+        cachedPrompts = items;
+        return cachedPrompts;
+      }
+    } catch (error) {
+      lastError = error;
+      console.warn("Prompt fetch failed:", error);
+    }
+  }
+
+  throw lastError ?? new Error("No prompts available");
 }
 
 export function findPromptById(items, id) {
