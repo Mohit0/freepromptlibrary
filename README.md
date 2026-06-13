@@ -33,16 +33,17 @@ Then open [http://localhost:8080](http://localhost:8080).
 ├── css/style.css           # Styles
 ├── js/app.js               # Gallery logic
 ├── js/submit.js            # Submission page logic
-├── data/prompts.json       # All prompt entries
+├── data/prompts.json       # All prompt entries (single source of truth)
 ├── assets/
 │   ├── images/             # Image files
 │   └── videos/             # Video files
 ├── submissions/template.json
 ├── scripts/
-│   ├── validate.js
-│   └── bundle-prompts.js
+│   └── validate.js         # Optional local check (CI runs this too)
 └── .github/workflows/      # Deploy + validate CI
 ```
+
+To add a prompt: put media in `assets/`, add an entry to `data/prompts.json`, commit, and push. No other commands required.
 
 ## Contributing
 
@@ -83,13 +84,11 @@ For organization repos, an org admin may need to allow GitHub Pages under **Org 
 
 ## Validation
 
-Run locally before opening a PR:
+GitHub Actions runs validation on deploy and pull requests. To check locally (optional):
 
 ```bash
 node scripts/validate.js
 ```
-
-Checks include: required fields, unique IDs, media file exists, and correct file extensions.
 
 ## License
 

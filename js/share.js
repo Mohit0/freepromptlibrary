@@ -235,24 +235,22 @@ async function fetchPromptItems(url) {
 export async function loadPrompts() {
   if (cachedPrompts) return cachedPrompts;
 
-  const inlineItems = readInlinePrompts();
-  if (inlineItems?.length) {
-    cachedPrompts = inlineItems;
-    return cachedPrompts;
-  }
-
   let lastError = null;
   for (const url of getPromptJsonUrls()) {
     try {
       const items = await fetchPromptItems(url);
-      if (items.length) {
-        cachedPrompts = items;
-        return cachedPrompts;
-      }
+      cachedPrompts = items;
+      return cachedPrompts;
     } catch (error) {
       lastError = error;
       console.warn("Prompt fetch failed:", error);
     }
+  }
+
+  const inlineItems = readInlinePrompts();
+  if (inlineItems) {
+    cachedPrompts = inlineItems;
+    return cachedPrompts;
   }
 
   throw lastError ?? new Error("No prompts available");

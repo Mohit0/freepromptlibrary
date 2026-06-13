@@ -34,8 +34,8 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Bundle prompts data
-        run: node scripts/bundle-prompts.js
+      - name: Validate prompts
+        run: node scripts/validate.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

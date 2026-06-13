@@ -40,17 +40,17 @@ git checkout -b add/my-prompt-name
 
 Append your entry to the `items` array using `submissions/template.json` as a guide.
 
-### 5. Validate and open a PR
+**That's it for the site data** — the gallery reads `data/prompts.json` directly. No bundle or build commands needed.
+
+### 5. Push and open a PR
 
 ```bash
-node scripts/validate.js
-node scripts/bundle-prompts.js
-git add assets/ data/prompts.json js/prompts-data.js index.html prompt.html submit.html
+git add assets/ data/prompts.json
 git commit -m "Add prompt: Your Title"
 git push origin add/my-prompt-name
 ```
 
-Open a pull request. The **Validate submissions** workflow runs automatically.
+Open a pull request. GitHub Actions validates your submission automatically.
 
 ## Field rules
 
@@ -63,3 +63,11 @@ Open a pull request. The **Validate submissions** workflow runs automatically.
 
 - Be specific in prompts — style, lighting, lens, mood
 - Compress large files before submitting
+
+## Local preview
+
+```bash
+python3 -m http.server 8080
+```
+
+Edit `data/prompts.json`, refresh the browser — changes show up immediately.

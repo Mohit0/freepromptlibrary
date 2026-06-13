@@ -1,6 +1,14 @@
 {
   "items": [
     {
+      "id": "himalayan-landscape-001",
+      "title": "Himalayan Landscape",
+      "prompt": "Himalayan landscape in golden hour light, shallow depth of field, 85mm lens, warm tones, film grain, editorial fashion photography style",
+      "type": "image",
+      "media": "assets/images/1781332678408.png",
+      "contributor": "@mohit0s"
+    },
+    {
       "id": "cinematic-portrait-001",
       "title": "Cinematic Portrait",
       "prompt": "Cinematic portrait of a woman in golden hour light, shallow depth of field, 85mm lens, warm tones, film grain, editorial fashion photography style",
