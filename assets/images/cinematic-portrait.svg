@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a2318"/>
+      <stop offset="100%" style="stop-color:#1a1510"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" style="stop-color:#e8a54b;stop-opacity:0.4"/>
+      <stop offset="100%" style="stop-color:#e8a54b;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <ellipse cx="400" cy="240" rx="200" ry="180" fill="url(#glow)"/>
+  <text x="400" y="320" text-anchor="middle" fill="#f5f0e6" font-family="Georgia, serif" font-size="28">Cinematic Portrait</text>
+  <text x="400" y="360" text-anchor="middle" fill="#a89f8f" font-family="sans-serif" font-size="14">Sample placeholder  replace with your image</text>
+</svg>

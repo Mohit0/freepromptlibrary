@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A community prompt library for AI-generated images and videos. Browse prompts, preview results, and contribute via pull request.">
+  <title>Prompt Library — AI Image & Video Prompts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a href="#" class="logo">
+        <span class="logo-mark" aria-hidden="true">◇</span>
+        Prompt Library
+      </a>
+      <div class="nav-links">
+        <a href="#gallery">Gallery</a>
+        <a href="#contribute">Contribute</a>
+        <a href="https://github.com/" class="nav-github" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <p class="hero-eyebrow">Community-curated AI prompts</p>
+      <h1>Generate images &amp; videos like these</h1>
+      <p class="hero-lead">
+        Browse real prompts paired with their outputs. Copy what works, remix it,
+        and submit your own creations through a pull request.
+      </p>
+      <div class="hero-actions">
+        <a href="#gallery" class="btn btn-primary">Explore gallery</a>
+        <a href="#contribute" class="btn btn-secondary">Submit a prompt</a>
+      </div>
+      <dl class="hero-stats" id="hero-stats">
+        <div>
+          <dt id="stat-total">—</dt>
+          <dd>Prompts</dd>
+        </div>
+        <div>
+          <dt id="stat-images">—</dt>
+          <dd>Images</dd>
+        </div>
+        <div>
+          <dt id="stat-videos">—</dt>
+          <dd>Videos</dd>
+        </div>
+      </dl>
+    </section>
+  </header>
+
+  <main>
+    <section id="gallery" class="gallery-section">
+      <div class="section-header">
+        <h2>Gallery</h2>
+        <p>Filter by media type or search prompts, tags, and models.</p>
+      </div>
+
+      <div class="controls">
+        <div class="search-wrap">
+          <label for="search" class="visually-hidden">Search prompts</label>
+          <input type="search" id="search" placeholder="Search prompts, tags, models…" autocomplete="off">
+        </div>
+        <div class="filter-group" role="group" aria-label="Filter by media type">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="image">Images</button>
+          <button class="filter-btn" data-filter="video">Videos</button>
+        </div>
+      </div>
+
+      <div id="tag-filters" class="tag-filters" aria-label="Filter by tag"></div>
+
+      <div id="gallery-grid" class="gallery-grid" aria-live="polite"></div>
+      <p id="empty-state" class="empty-state" hidden>No prompts match your filters.</p>
+    </section>
+
+    <section id="contribute" class="contribute-section">
+      <div class="contribute-card">
+        <h2>Contribute via Pull Request</h2>
+        <p>
+          This site is static and community-driven. Add your prompt, media file, and metadata
+          in a PR — once merged, it appears in the gallery automatically.
+        </p>
+        <ol class="contribute-steps">
+          <li>Fork the repository and create a branch.</li>
+          <li>Add your image or video to <code>assets/images/</code> or <code>assets/videos/</code>.</li>
+          <li>Copy <code>submissions/template.json</code> and add your entry to <code>data/prompts.json</code>.</li>
+          <li>Open a pull request. CI will validate your submission.</li>
+        </ol>
+        <a href="CONTRIBUTING.md" class="btn btn-primary">Read full guide</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Built for GitHub Pages · Open source · Submit prompts via pull request</p>
+  </footer>
+
+  <dialog id="detail-modal" class="detail-modal">
+    <div class="modal-inner">
+      <button class="modal-close" aria-label="Close" data-close>&times;</button>
+      <div class="modal-media" id="modal-media"></div>
+      <div class="modal-content">
+        <div class="modal-meta">
+          <span class="badge" id="modal-type"></span>
+          <span class="modal-date" id="modal-date"></span>
+        </div>
+        <h3 id="modal-title"></h3>
+        <p class="modal-model" id="modal-model"></p>
+        <div class="prompt-block">
+          <div class="prompt-header">
+            <h4>Prompt</h4>
+            <button class="btn btn-small" id="copy-prompt">Copy prompt</button>
+          </div>
+          <pre id="modal-prompt"></pre>
+        </div>
+        <div class="modal-tags" id="modal-tags"></div>
+        <p class="modal-contributor" id="modal-contributor"></p>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="js/app.js" type="module"></script>
+</body>
+</html>
