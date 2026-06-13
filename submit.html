@@ -16,7 +16,7 @@
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Submit your AI prompt and generated image or video to the Prompt Library.">
+  <meta name="description" content="Submit your AI prompt and generated image or video. A pull request is created automatically.">
   <title>Submit a Prompt — Prompt Library</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,13 +52,15 @@
       <p class="hero-eyebrow">Contribute</p>
       <h1>Submit a prompt</h1>
       <p class="hero-lead">
-        Fill in the form, copy your JSON entry, then open a pull request on GitHub with your media file.
+        Fill in the form, attach your image or video, and submit. A pull request is created automatically — no fork or git required.
       </p>
     </section>
 
     <div class="submit-layout submit-layout--single">
       <section class="submit-builder" aria-label="Submission form">
         <form id="submit-form" class="submit-form" novalidate>
+          <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+
           <div class="form-row">
             <label for="title">Title</label>
             <input type="text" id="title" name="title" placeholder="Neon Alley in Rain" required>
@@ -79,7 +81,7 @@
 
           <div class="form-row">
             <label for="media-file">Your image or video</label>
-            <input type="file" id="media-file" class="file-input" accept="image/*,video/*">
+            <input type="file" id="media-file" class="file-input" accept="image/*,video/*" required>
             <span class="field-hint" id="media-hint">jpg, png, webp, gif, svg · mp4, webm, mov</span>
             <div id="media-preview" class="media-preview" hidden></div>
           </div>
@@ -98,47 +100,51 @@
             <label for="contributor">Your GitHub username</label>
             <input type="text" id="contributor" name="contributor" placeholder="@your-username" required>
           </div>
+
+          <div id="submit-status" class="submit-status" hidden aria-live="polite"></div>
+
+          <div class="submit-actions submit-actions--primary">
+            <button type="submit" class="btn btn-primary btn-large" id="submit-btn">Submit &amp; create PR</button>
+          </div>
         </form>
 
-        <div class="preview-block">
-          <div class="preview-header">
-            <h3>Your JSON entry</h3>
-            <div class="preview-actions">
-              <button type="button" class="btn btn-small" id="copy-json">Copy JSON</button>
-              <button type="button" class="btn btn-small btn-secondary" id="download-json">Download</button>
+        <details class="submit-preview-details">
+          <summary>Preview generated JSON</summary>
+          <div class="preview-block">
+            <div class="preview-header">
+              <h3>Your JSON entry</h3>
+              <div class="preview-actions">
+                <button type="button" class="btn btn-small" id="copy-json">Copy JSON</button>
+                <button type="button" class="btn btn-small btn-secondary" id="download-json">Download</button>
+              </div>
             </div>
+            <pre id="json-preview" class="json-preview" aria-live="polite"></pre>
           </div>
-          <pre id="json-preview" class="json-preview" aria-live="polite"></pre>
-        </div>
-
-        <div class="submit-actions">
-          <a href="https://github.com/Mohit0/freepromptlibrary/fork" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Fork on GitHub</a>
-          <a href="CONTRIBUTING.md" class="btn btn-secondary">Full guide</a>
-        </div>
+        </details>
       </section>
 
       <section class="submit-steps" aria-label="Submission steps">
-        <h2>How to publish it</h2>
+        <h2>How it works</h2>
         <ol class="step-list">
           <li class="step-card">
             <span class="step-number">1</span>
             <div>
-              <h3>Complete the form</h3>
-              <p>Pick your media file and fill in the prompt details above.</p>
+              <h3>Fill in the form</h3>
+              <p>Add your prompt details and pick your image or video from your phone or laptop.</p>
             </div>
           </li>
           <li class="step-card">
             <span class="step-number">2</span>
             <div>
-              <h3>Fork &amp; add files</h3>
-              <p>Upload your media to <code>assets/images/</code> or <code>assets/videos/</code>, then paste your JSON into <code>data/prompts.json</code>.</p>
+              <h3>Tap submit</h3>
+              <p>Your file is uploaded and a branch is created in the repository automatically.</p>
             </div>
           </li>
           <li class="step-card">
             <span class="step-number">3</span>
             <div>
-              <h3>Open a pull request</h3>
-              <p>GitHub validates your submission automatically. Merge when ready and it goes live.</p>
+              <h3>Review &amp; merge the PR</h3>
+              <p>CI validates the submission. Merge when ready and it goes live in the gallery.</p>
             </div>
           </li>
         </ol>
@@ -147,8 +153,8 @@
           <div class="info-card">
             <h3>Accepted formats</h3>
             <ul>
-              <li><strong>Images:</strong> jpg, png, webp, gif, svg</li>
-              <li><strong>Videos:</strong> mp4, webm, mov</li>
+              <li><strong>Images:</strong> jpg, png, webp, gif, svg (max 10 MB)</li>
+              <li><strong>Videos:</strong> mp4, webm, mov (max 50 MB)</li>
             </ul>
           </div>
           <div class="info-card">

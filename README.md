@@ -8,7 +8,9 @@ https://mohit0.github.io/freepromptlibrary/
 
 ## Submit a prompt
 
-Use the [submit page](https://mohit0.github.io/freepromptlibrary/submit.html) to build your JSON entry, then open a pull request on GitHub with your media file. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
+Fill in the form on the [submit page](https://mohit0.github.io/freepromptlibrary/submit.html), attach your media, and tap **Submit & create PR**. No fork or git required.
+
+**Maintainer setup (one time):** deploy the Cloudflare Worker — see [workers/README.md](workers/README.md).
 
 ## Local preview
 
@@ -41,6 +43,10 @@ Then open [http://localhost:8080](http://localhost:8080).
 ├── scripts/
 │   ├── validate.js
 │   └── bundle-prompts.js
+├── workers/                # Cloudflare Worker — form → auto PR
+│   ├── submit-prompt.js
+│   └── README.md
+├── js/config.js            # Worker URL (set after deploy)
 └── .github/workflows/      # Deploy + validate CI
 ```
 
@@ -48,7 +54,7 @@ Then open [http://localhost:8080](http://localhost:8080).
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 
-**Quick submit:** Use the [submit page](https://mohit0.github.io/freepromptlibrary/submit.html) to build your entry, then open a PR on GitHub.
+**Quick submit:** [Submit page](https://mohit0.github.io/freepromptlibrary/submit.html) → attach media → PR created automatically.
 
 ## GitHub Pages setup
 

@@ -1421,6 +1421,62 @@ main {
   gap: 0.6rem;
 }
 
+.submit-actions--primary {
+  margin-top: 0.5rem;
+}
+
+.submit-status {
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.submit-status a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.submit-status--success {
+  background: rgba(72, 187, 120, 0.12);
+  border: 1px solid rgba(72, 187, 120, 0.35);
+  color: #9ae6b4;
+}
+
+.submit-status--error {
+  background: rgba(245, 101, 101, 0.12);
+  border: 1px solid rgba(245, 101, 101, 0.35);
+  color: #feb2b2;
+}
+
+.submit-status--info {
+  background: var(--accent-soft);
+  border: 1px solid rgba(232, 165, 75, 0.28);
+  color: var(--text);
+}
+
+.submit-preview-details {
+  margin-top: 1.25rem;
+}
+
+.submit-preview-details summary {
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .checklist-section {
   margin-top: 3rem;
   padding: 2rem;

@@ -1,0 +1,10 @@
+name = "freepromptlibrary-submit"
+main = "submit-prompt.js"
+compatibility_date = "2024-06-01"
+
+[vars]
+GITHUB_REPO = "Mohit0/freepromptlibrary"
+ALLOWED_ORIGINS = "https://mohit0.github.io,http://localhost:8080,http://127.0.0.1:8080,http://localhost:8765,http://127.0.0.1:8765"
+
+# Set the secret before deploying:
+#   npx wrangler secret put GITHUB_TOKEN

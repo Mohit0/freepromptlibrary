@@ -1,9 +1,11 @@
-const REPO_URL = "https://github.com/Mohit0/freepromptlibrary";
+import { SUBMIT_API_URL } from "./config.js";
 
 const form = document.getElementById("submit-form");
 const preview = document.getElementById("json-preview");
 const copyBtn = document.getElementById("copy-json");
 const downloadBtn = document.getElementById("download-json");
+const submitBtn = document.getElementById("submit-btn");
+const submitStatus = document.getElementById("submit-status");
 const mediaFileInput = document.getElementById("media-file");
 const mediaPreview = document.getElementById("media-preview");
 const mediaHint = document.getElementById("media-hint");
@@ -58,6 +60,23 @@ function getFormData() {
   };
 }
 
+function showStatus(type, message, link) {
+  if (!submitStatus) return;
+  submitStatus.hidden = false;
+  submitStatus.className = `submit-status submit-status--${type}`;
+  submitStatus.innerHTML = link
+    ? `${message} <a href="${link}" target="_blank" rel="noopener noreferrer">View pull request</a>`
+    : message;
+}
+
+function clearStatus() {
+  if (!submitStatus) {
+    return;
+  }
+  submitStatus.hidden = true;
+  submitStatus.textContent = "";
+}
+
 function renderPreview() {
   if (!preview || !form) return;
   preview.textContent = JSON.stringify(getFormData(), null, 2);
@@ -110,6 +129,23 @@ function setMediaType(type) {
   renderPreview();
 }
 
+function validateClientForm() {
+  const data = getFormData();
+  const file = mediaFileInput?.files?.[0];
+  const errors = [];
+
+  if (!data.title) errors.push("Title is required.");
+  if (!data.prompt) errors.push("Prompt is required.");
+  if (!data.tags.length) errors.push("Add at least one tag.");
+  if (!form.contributor.value.trim()) errors.push("GitHub username is required.");
+  if (!file) errors.push("Choose an image or video file.");
+  if (!data.id || !/^[a-z0-9][a-z0-9-]*$/.test(data.id)) {
+    errors.push("ID must be lowercase letters, numbers, and hyphens.");
+  }
+
+  return errors;
+}
+
 async function copyText(text, btn, doneLabel = "Copied!") {
   await navigator.clipboard.writeText(text);
   const original = btn.textContent;
@@ -130,6 +166,64 @@ function downloadJson() {
   URL.revokeObjectURL(url);
 }
 
+async function submitForm(event) {
+  event.preventDefault();
+  clearStatus();
+
+  const errors = validateClientForm();
+  if (errors.length) {
+    showStatus("error", errors.join(" "));
+    return;
+  }
+
+  if (!SUBMIT_API_URL) {
+    showStatus(
+      "error",
+      "Submission API is not configured yet. The site owner needs to deploy the Cloudflare Worker and set SUBMIT_API_URL in js/config.js."
+    );
+    return;
+  }
+
+  const payload = new FormData();
+  const data = getFormData();
+  payload.append("title", data.title);
+  payload.append("id", data.id);
+  payload.append("prompt", data.prompt);
+  payload.append("type", data.type);
+  payload.append("tags", data.tags.join(", "));
+  payload.append("contributor", data.contributor);
+  payload.append("media", mediaFileInput.files[0]);
+  payload.append("website", "");
+
+  const originalLabel = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting…";
+
+  try {
+    const response = await fetch(SUBMIT_API_URL, {
+      method: "POST",
+      body: payload,
+    });
+
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      throw new Error(result.error || "Submission failed.");
+    }
+
+    showStatus("success", "Pull request created! ", result.prUrl);
+    form.reset();
+    idTouched = false;
+    clearMediaPreview();
+    setMediaType("image");
+    renderPreview();
+  } catch (error) {
+    showStatus("error", error.message || "Submission failed. Please try again.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+  }
+}
+
 function bindMobileNav() {
   const toggle = document.querySelector(".nav-toggle");
   const menu = document.getElementById("mobile-menu");
@@ -143,6 +237,15 @@ function bindMobileNav() {
 }
 
 if (form) {
+  if (!SUBMIT_API_URL && submitBtn) {
+    showStatus(
+      "info",
+      "One-time setup needed: deploy the submission API (see workers/README.md), then add its URL to js/config.js."
+    );
+  }
+
+  form.addEventListener("submit", submitForm);
+
   titleInput.addEventListener("input", () => {
     if (!idTouched) {
       idInput.value = slugify(titleInput.value);
