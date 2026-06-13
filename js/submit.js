@@ -1,8 +1,10 @@
+const REPO_URL = "https://github.com/Mohit0/freepromptlibrary";
+const ISSUE_FORM_URL = `${REPO_URL}/issues/new?template=prompt-submission.yml`;
+
 const form = document.getElementById("submit-form");
 const preview = document.getElementById("json-preview");
 const copyBtn = document.getElementById("copy-json");
-const mediaInput = document.getElementById("media");
-const mediaHint = document.getElementById("media-hint");
+const copyAndOpenBtn = document.getElementById("copy-and-open");
 const titleInput = document.getElementById("title");
 const idInput = document.getElementById("id");
 
@@ -23,15 +25,11 @@ function getFormData() {
     .map((tag) => tag.trim())
     .filter(Boolean);
 
-  const filename = form.media.value.trim();
-  const folder = mediaType === "video" ? "assets/videos/" : "assets/images/";
-
   return {
     id: form.id.value.trim(),
     title: form.title.value.trim(),
     prompt: form.prompt.value.trim(),
     type: mediaType,
-    media: filename.startsWith("assets/") ? filename : `${folder}${filename}`,
     tags,
     contributor: form.contributor.value.trim().startsWith("@")
       ? form.contributor.value.trim()
@@ -39,9 +37,24 @@ function getFormData() {
   };
 }
 
+function buildDraftText(data) {
+  const username = data.contributor.replace(/^@/, "");
+  return [
+    "Draft for GitHub submission form:",
+    "",
+    `Title: ${data.title}`,
+    `Prompt: ${data.prompt}`,
+    `Media type: ${data.type}`,
+    `Tags: ${data.tags.join(", ")}`,
+    `GitHub username: ${username}`,
+    "",
+    "Remember to attach your image or video in the GitHub form before submitting.",
+  ].join("\n");
+}
+
 function renderPreview() {
-  const data = getFormData();
-  preview.textContent = JSON.stringify(data, null, 2);
+  if (!preview || !form) return;
+  preview.textContent = JSON.stringify(getFormData(), null, 2);
 }
 
 function setMediaType(type) {
@@ -49,17 +62,15 @@ function setMediaType(type) {
   document.querySelectorAll(".type-btn").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.type === type);
   });
-  mediaHint.textContent =
-    type === "video" ? "Will be saved to assets/videos/" : "Will be saved to assets/images/";
   renderPreview();
 }
 
-async function copyJson() {
-  await navigator.clipboard.writeText(preview.textContent);
-  const original = copyBtn.textContent;
-  copyBtn.textContent = "Copied!";
+async function copyText(text, btn, doneLabel = "Copied!") {
+  await navigator.clipboard.writeText(text);
+  const original = btn.textContent;
+  btn.textContent = doneLabel;
   setTimeout(() => {
-    copyBtn.textContent = original;
+    btn.textContent = original;
   }, 1500);
 }
 
@@ -75,24 +86,38 @@ function bindMobileNav() {
   });
 }
 
-titleInput.addEventListener("input", () => {
-  if (!idTouched) {
-    idInput.value = slugify(titleInput.value);
+if (form) {
+  titleInput.addEventListener("input", () => {
+    if (!idTouched) {
+      idInput.value = slugify(titleInput.value);
+    }
+    renderPreview();
+  });
+
+  idInput.addEventListener("input", () => {
+    idTouched = true;
+    renderPreview();
+  });
+
+  form.addEventListener("input", renderPreview);
+
+  document.querySelectorAll(".type-btn").forEach((btn) => {
+    btn.addEventListener("click", () => setMediaType(btn.dataset.type));
+  });
+
+  if (copyBtn) {
+    copyBtn.addEventListener("click", () => copyText(preview.textContent, copyBtn, "Copied!"));
   }
+
+  if (copyAndOpenBtn) {
+    copyAndOpenBtn.addEventListener("click", async () => {
+      const draft = buildDraftText(getFormData());
+      await copyText(draft, copyAndOpenBtn, "Copied — opening…");
+      window.open(ISSUE_FORM_URL, "_blank", "noopener,noreferrer");
+    });
+  }
+
   renderPreview();
-});
+}
 
-idInput.addEventListener("input", () => {
-  idTouched = true;
-  renderPreview();
-});
-
-form.addEventListener("input", renderPreview);
-
-document.querySelectorAll(".type-btn").forEach((btn) => {
-  btn.addEventListener("click", () => setMediaType(btn.dataset.type));
-});
-
-copyBtn.addEventListener("click", copyJson);
 bindMobileNav();
-renderPreview();

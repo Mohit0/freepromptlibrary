@@ -1,14 +1,19 @@
 # Prompt Library
 
-A static, community-driven gallery of AI prompts paired with their generated images and videos. Browse prompts, copy what works, and submit your own via pull request.
+A static, community-driven gallery of AI prompts paired with their generated images and videos. Browse prompts, copy what works, and submit your own from your phone.
 
 ## Live site
 
-Once deployed, the site is available at:
+https://mohit0.github.io/freepromptlibrary/
 
-```
-https://<your-username>.github.io/<repo-name>/
-```
+## Submit a prompt (no git required)
+
+1. Open the [submission form](https://github.com/Mohit0/freepromptlibrary/issues/new?template=prompt-submission.yml) on GitHub (works on mobile)
+2. Fill in the fields and attach your image or video
+3. Submit — a pull request is created automatically
+4. Review and merge when ready
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## Local preview
 
@@ -29,29 +34,28 @@ Then open [http://localhost:8080](http://localhost:8080).
 ```
 ├── index.html              # Gallery homepage
 ├── prompt.html             # Shareable page for a single prompt
-├── submit.html             # Submission guide & JSON builder
+├── submit.html             # Mobile-friendly submission guide
+├── .github/ISSUE_FORM/     # GitHub form for phone submissions
 ├── css/style.css           # Styles
 ├── js/app.js               # Gallery logic
 ├── js/submit.js            # Submission page logic
-├── data/prompts.json       # All prompt entries (edited via PR)
+├── data/prompts.json       # All prompt entries
 ├── assets/
 │   ├── images/             # Image files
 │   └── videos/             # Video files
 ├── submissions/template.json
-├── scripts/validate.js     # PR validation script
-└── .github/workflows/      # Deploy + validate CI
+├── scripts/
+│   ├── validate.js
+│   ├── bundle-prompts.js
+│   └── process-issue-submission.js
+└── .github/workflows/      # Deploy, validate, auto-PR
 ```
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide on submitting prompts through pull requests.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 
-Quick steps:
-
-1. Fork the repo and create a branch
-2. Add your media to `assets/images/` or `assets/videos/`
-3. Add an entry to `data/prompts.json` using `submissions/template.json`
-4. Open a pull request — CI validates your submission automatically
+**Quick submit:** [Open the GitHub form](https://github.com/Mohit0/freepromptlibrary/issues/new?template=prompt-submission.yml) — attach media, submit, PR is created automatically.
 
 ## GitHub Pages setup
 

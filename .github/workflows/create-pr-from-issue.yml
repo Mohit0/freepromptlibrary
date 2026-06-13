@@ -1,0 +1,70 @@
+name: Create PR from prompt submission
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: submission-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  create-pr:
+    if: contains(github.event.issue.labels.*.name, 'prompt-submission')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Process issue submission
+        id: process
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: node scripts/process-issue-submission.js
+
+      - name: Create pull request
+        id: cpr
+        if: steps.process.outputs.skipped != 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Add prompt: ${{ steps.process.outputs.entry_title }}"
+          branch: submission/issue-${{ github.event.issue.number }}
+          delete-branch: true
+          title: "Add prompt: ${{ steps.process.outputs.entry_title }}"
+          body: |
+            Automated submission from issue #${{ github.event.issue.number }} by @${{ github.event.issue.user.login }}.
+
+            **Review checklist**
+            - [ ] Prompt text matches the attached output
+            - [ ] Media quality is acceptable
+            - [ ] Tags are relevant
+            - [ ] Contributor attribution is correct
+
+            Closes #${{ github.event.issue.number }}
+          labels: submission
+
+      - name: Comment on issue
+        if: steps.cpr.outputs.pull-request-number
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = '${{ steps.cpr.outputs.pull-request-url }}';
+            const id = '${{ steps.process.outputs.entry_id }}';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `✅ **Submission received!**\n\nA pull request has been opened: ${pr}\n\nPrompt ID: \`${id}\`\n\nA maintainer will review and merge it. Once merged, it appears in the gallery.`
+            });

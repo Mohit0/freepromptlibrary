@@ -992,7 +992,66 @@ main {
 
 .submit-hero {
   max-width: 640px;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+}
+
+.submit-cta {
+  margin-bottom: 2.5rem;
+}
+
+.submit-cta-card {
+  padding: 1.75rem;
+  background: linear-gradient(145deg, rgba(232, 165, 75, 0.12), rgba(232, 165, 75, 0.04));
+  border: 1px solid rgba(232, 165, 75, 0.28);
+  border-radius: calc(var(--radius) + 6px);
+}
+
+.submit-cta-card h2 {
+  margin: 0 0 0.65rem;
+  font-family: var(--serif);
+  font-size: 1.65rem;
+  font-weight: 400;
+}
+
+.submit-cta-card p {
+  margin: 0 0 1.25rem;
+  color: var(--text-muted);
+  max-width: 52ch;
+}
+
+.submit-cta-hint {
+  margin: 0.85rem 0 0 !important;
+  font-size: 0.82rem !important;
+}
+
+.btn-large {
+  width: 100%;
+  max-width: 360px;
+  padding: 0.95rem 1.5rem;
+  font-size: 1rem;
+}
+
+.submit-layout--single {
+  grid-template-columns: 1fr;
+  max-width: 720px;
+}
+
+.submit-advanced {
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 4px);
+}
+
+.submit-advanced summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.submit-advanced[open] summary {
+  margin-bottom: 1.5rem;
 }
 
 .back-link {

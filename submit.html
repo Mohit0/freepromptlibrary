@@ -16,7 +16,7 @@
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Submit your AI prompt and generated image or video to the Prompt Library via pull request.">
+  <meta name="description" content="Submit your AI prompt from your phone — no fork or git required. A pull request is created automatically.">
   <title>Submit a Prompt — Prompt Library</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,7 +33,7 @@
       <div class="nav-links">
         <a href="index.html#gallery">Gallery</a>
         <a href="submit.html" class="nav-active">Submit</a>
-        <a href="https://github.com/" class="nav-github" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/Mohit0/freepromptlibrary" class="nav-github" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
       <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
         <span></span><span></span>
@@ -42,7 +42,7 @@
     <div id="mobile-menu" class="mobile-menu" hidden>
       <a href="index.html#gallery">Gallery</a>
       <a href="submit.html" class="nav-active">Submit</a>
-      <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://github.com/Mohit0/freepromptlibrary" target="_blank" rel="noopener noreferrer">GitHub</a>
     </div>
   </header>
 
@@ -52,41 +52,51 @@
       <p class="hero-eyebrow">Contribute</p>
       <h1>Submit a prompt</h1>
       <p class="hero-lead">
-        Share your AI-generated image or video along with the exact prompt you used.
-        Submissions are added through a pull request and reviewed before going live.
+        Share your AI-generated image or video and the exact prompt you used.
+        Works from your phone — no laptop, fork, or git required.
       </p>
     </section>
 
-    <div class="submit-layout">
+    <section class="submit-cta" aria-label="Quick submit">
+      <div class="submit-cta-card">
+        <h2>Submit in 2 minutes</h2>
+        <p>Open the submission form on GitHub, attach your photo or video from your camera roll, and submit. A pull request is created automatically.</p>
+        <a
+          id="open-issue-form"
+          class="btn btn-primary btn-large"
+          href="https://github.com/Mohit0/freepromptlibrary/issues/new?template=prompt-submission.yml"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open submission form
+        </a>
+        <p class="submit-cta-hint">Opens GitHub — sign in if prompted. Works in the GitHub mobile app too.</p>
+      </div>
+    </section>
+
+    <div class="submit-layout submit-layout--single">
       <section class="submit-steps" aria-label="Submission steps">
         <h2>How it works</h2>
         <ol class="step-list">
           <li class="step-card">
             <span class="step-number">1</span>
             <div>
-              <h3>Fork &amp; branch</h3>
-              <p>Create a branch in your fork of the repository.</p>
+              <h3>Tap the button above</h3>
+              <p>Opens the GitHub submission form on your phone or laptop.</p>
             </div>
           </li>
           <li class="step-card">
             <span class="step-number">2</span>
             <div>
-              <h3>Upload your media</h3>
-              <p>Add your file to <code>assets/images/</code> or <code>assets/videos/</code>.</p>
+              <h3>Fill in &amp; attach media</h3>
+              <p>Enter your prompt details and attach your image or video using the paperclip button.</p>
             </div>
           </li>
           <li class="step-card">
             <span class="step-number">3</span>
             <div>
-              <h3>Add your entry</h3>
-              <p>Append your JSON entry to <code>data/prompts.json</code> using the builder below.</p>
-            </div>
-          </li>
-          <li class="step-card">
-            <span class="step-number">4</span>
-            <div>
-              <h3>Open a pull request</h3>
-              <p>CI validates your submission automatically. Once merged, it appears in the gallery.</p>
+              <h3>Submit the issue</h3>
+              <p>Automation opens a pull request. You review and merge when ready.</p>
             </div>
           </li>
         </ol>
@@ -103,90 +113,87 @@
             <h3>Before you submit</h3>
             <ul>
               <li>Use the exact prompt that produced the output</li>
-              <li>Pick a unique, descriptive ID</li>
-              <li>Run <code>node scripts/validate.js</code> locally</li>
+              <li>Attach one image or video per submission</li>
+              <li>Make sure you have rights to share the media</li>
             </ul>
           </div>
         </div>
       </section>
-
-      <section class="submit-builder" aria-label="JSON entry builder">
-        <div class="builder-header">
-          <h2>Entry builder</h2>
-          <p>Fill in the form to generate your JSON entry. Copy it into <code>data/prompts.json</code>.</p>
-        </div>
-
-        <form id="submit-form" class="submit-form" novalidate>
-          <div class="form-row">
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" placeholder="Neon Alley in Rain" required>
-          </div>
-
-          <div class="form-row">
-            <label for="id">ID <span class="label-hint">lowercase, hyphens only</span></label>
-            <input type="text" id="id" name="id" placeholder="neon-alley-rain" pattern="[a-z0-9][a-z0-9-]*" required>
-          </div>
-
-          <div class="form-row">
-            <label for="type">Media type</label>
-            <div class="type-toggle" role="group" aria-label="Media type">
-              <button type="button" class="type-btn active" data-type="image">Image</button>
-              <button type="button" class="type-btn" data-type="video">Video</button>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <label for="media">Media filename</label>
-            <input type="text" id="media" name="media" placeholder="neon-alley-rain.jpg" required>
-            <span class="field-hint" id="media-hint">Will be saved to assets/images/</span>
-          </div>
-
-          <div class="form-row">
-            <label for="prompt">Prompt</label>
-            <textarea id="prompt" name="prompt" rows="5" placeholder="A narrow Tokyo alley at night, heavy rain, neon signs reflecting on wet pavement…" required></textarea>
-          </div>
-
-          <div class="form-row">
-            <label for="tags">Tags <span class="label-hint">comma-separated</span></label>
-            <input type="text" id="tags" name="tags" placeholder="cyberpunk, rain, night" required>
-          </div>
-
-          <div class="form-row">
-            <label for="contributor">Your GitHub username</label>
-            <input type="text" id="contributor" name="contributor" placeholder="@your-username" required>
-          </div>
-        </form>
-
-        <div class="preview-block">
-          <div class="preview-header">
-            <h3>Generated JSON</h3>
-            <button type="button" class="btn btn-small" id="copy-json">Copy JSON</button>
-          </div>
-          <pre id="json-preview" class="json-preview" aria-live="polite"></pre>
-        </div>
-
-        <div class="submit-actions">
-          <a href="CONTRIBUTING.md" class="btn btn-secondary">Full contributing guide</a>
-          <a href="submissions/template.json" class="btn btn-secondary" download>Download template</a>
-          <a href="https://github.com/" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Open on GitHub</a>
-        </div>
-      </section>
     </div>
 
+    <details class="submit-advanced">
+      <summary>Advanced: draft locally &amp; JSON builder</summary>
+      <div class="submit-layout">
+        <section class="submit-builder" aria-label="JSON entry builder">
+          <div class="builder-header">
+            <h2>Entry builder</h2>
+            <p>Draft your entry here, then use the GitHub form to submit. Helpful if you want to prepare text before opening GitHub.</p>
+          </div>
+
+          <form id="submit-form" class="submit-form" novalidate>
+            <div class="form-row">
+              <label for="title">Title</label>
+              <input type="text" id="title" name="title" placeholder="Neon Alley in Rain" required>
+            </div>
+
+            <div class="form-row">
+              <label for="id">ID <span class="label-hint">lowercase, hyphens only</span></label>
+              <input type="text" id="id" name="id" placeholder="neon-alley-rain" pattern="[a-z0-9][a-z0-9-]*" required>
+            </div>
+
+            <div class="form-row">
+              <label for="type">Media type</label>
+              <div class="type-toggle" role="group" aria-label="Media type">
+                <button type="button" class="type-btn active" data-type="image">Image</button>
+                <button type="button" class="type-btn" data-type="video">Video</button>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label for="prompt">Prompt</label>
+              <textarea id="prompt" name="prompt" rows="5" placeholder="A narrow Tokyo alley at night, heavy rain, neon signs reflecting on wet pavement…" required></textarea>
+            </div>
+
+            <div class="form-row">
+              <label for="tags">Tags <span class="label-hint">comma-separated</span></label>
+              <input type="text" id="tags" name="tags" placeholder="cyberpunk, rain, night" required>
+            </div>
+
+            <div class="form-row">
+              <label for="contributor">Your GitHub username</label>
+              <input type="text" id="contributor" name="contributor" placeholder="@your-username" required>
+            </div>
+          </form>
+
+          <div class="preview-block">
+            <div class="preview-header">
+              <h3>Generated JSON</h3>
+              <button type="button" class="btn btn-small" id="copy-json">Copy JSON</button>
+            </div>
+            <pre id="json-preview" class="json-preview" aria-live="polite"></pre>
+          </div>
+
+          <div class="submit-actions">
+            <button type="button" class="btn btn-primary" id="copy-and-open">Copy draft &amp; open form</button>
+            <a href="CONTRIBUTING.md" class="btn btn-secondary">Contributing guide</a>
+          </div>
+        </section>
+      </div>
+    </details>
+
     <section class="checklist-section">
-      <h2>PR checklist</h2>
+      <h2>What happens next</h2>
       <ul class="checklist">
-        <li><span class="check-icon" aria-hidden="true">✓</span> Media file added to the correct assets folder</li>
-        <li><span class="check-icon" aria-hidden="true">✓</span> Entry added to <code>data/prompts.json</code></li>
-        <li><span class="check-icon" aria-hidden="true">✓</span> ID is unique across all entries</li>
-        <li><span class="check-icon" aria-hidden="true">✓</span> Validation script passes locally</li>
-        <li><span class="check-icon" aria-hidden="true">✓</span> You have rights to share the media</li>
+        <li><span class="check-icon" aria-hidden="true">✓</span> GitHub Actions downloads your attachment</li>
+        <li><span class="check-icon" aria-hidden="true">✓</span> A pull request is opened automatically</li>
+        <li><span class="check-icon" aria-hidden="true">✓</span> CI validates the submission</li>
+        <li><span class="check-icon" aria-hidden="true">✓</span> You review and merge — it goes live in the gallery</li>
       </ul>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p>Built for GitHub Pages · <a href="index.html#gallery">Browse gallery</a> · Submit via pull request</p>
+    <p>Built for GitHub Pages · <a href="index.html#gallery">Browse gallery</a> · <a href="https://github.com/Mohit0/freepromptlibrary/issues/new?template=prompt-submission.yml" target="_blank" rel="noopener noreferrer">Submit a prompt</a></p>
   </footer>
 
   <script src="js/submit.js" type="module"></script>
