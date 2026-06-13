@@ -17,6 +17,10 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="View a shared AI prompt and its generated image or video.">
+  <meta property="og:title" content="Prompt — Prompt Library">
+  <meta property="og:description" content="View a shared AI prompt and its generated image or video.">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary_large_image">
   <title>Prompt — Prompt Library</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,13 +56,18 @@
       <a href="index.html#gallery" class="back-link">← Back to gallery</a>
 
       <div class="prompt-layout">
-        <div class="prompt-media-wrap">
+        <div class="prompt-media-wrap" id="prompt-media-wrap">
+          <button type="button" class="modal-expand" id="prompt-media-expand" aria-label="View full screen" title="Full screen">⛶</button>
           <div id="prompt-media" class="prompt-media"></div>
         </div>
 
         <div class="prompt-details">
           <div class="prompt-meta">
             <span class="badge" id="prompt-type"></span>
+            <div class="prompt-actions">
+              <button type="button" class="btn btn-small modal-favorite" id="prompt-favorite">☆ Save</button>
+              <a href="submit.html" class="btn btn-small btn-secondary" id="prompt-remix">Remix</a>
+            </div>
           </div>
           <h1 id="prompt-title"></h1>
 
@@ -78,7 +87,6 @@
             <pre id="prompt-text"></pre>
           </div>
 
-          <div class="prompt-tags" id="prompt-tags"></div>
           <p class="prompt-contributor" id="prompt-contributor"></p>
         </div>
       </div>
@@ -89,7 +97,12 @@
     <p>Built for GitHub Pages · <a href="index.html#gallery">Browse gallery</a></p>
   </footer>
 
-  <script id="prompts-inline" type="application/json">{"items":[{"id":"cinematic-portrait-001","title":"Cinematic Portrait","prompt":"Cinematic portrait of a woman in golden hour light, shallow depth of field, 85mm lens, warm tones, film grain, editorial fashion photography style","type":"image","media":"assets/images/cinematic-portrait.svg","tags":["portrait","cinematic","photography"],"contributor":"@example"},{"id":"neon-cityscape-002","title":"Neon Cityscape","prompt":"Futuristic cyberpunk city at night, neon signs reflecting on wet streets, aerial view, volumetric fog, ultra detailed, 8k, blade runner aesthetic","type":"image","media":"assets/images/neon-cityscape.svg","tags":["cyberpunk","cityscape","neon"],"contributor":"@example"},{"id":"product-macro-003","title":"Product Macro Shot","prompt":"Macro product photography of a minimalist watch on marble surface, soft studio lighting, high contrast shadows, commercial advertising style, clean composition","type":"image","media":"assets/images/product-macro.svg","tags":["product","macro","commercial"],"contributor":"@example"},{"id":"ocean-timelapse-004","title":"Ocean Timelapse","prompt":"Timelapse of ocean waves crashing on rocky coastline at sunset, dramatic clouds moving fast, cinematic color grading, 4K, smooth motion","type":"video","media":"assets/videos/ocean-timelapse.mp4","tags":["nature","timelapse","ocean"],"contributor":"@example"},{"id":"abstract-motion-005","title":"Abstract Motion","prompt":"Abstract fluid motion graphics, iridescent liquid metal shapes morphing slowly, dark background, loopable, high-end motion design, 16:9","type":"video","media":"assets/videos/abstract-motion.mp4","tags":["abstract","motion","3d"],"contributor":"@example"}]}</script>
+  <dialog id="media-lightbox" class="media-lightbox">
+    <button class="media-lightbox-close" aria-label="Close" data-lightbox-close>&times;</button>
+    <div id="media-lightbox-content" class="media-lightbox-content"></div>
+  </dialog>
+
+  <script id="prompts-inline" type="application/json">{"items":[{"id":"cinematic-portrait-001","title":"Cinematic Portrait","prompt":"Cinematic portrait of a woman in golden hour light, shallow depth of field, 85mm lens, warm tones, film grain, editorial fashion photography style","type":"image","media":"assets/images/cinematic-portrait.svg","contributor":"@example"},{"id":"neon-cityscape-002","title":"Neon Cityscape","prompt":"Futuristic cyberpunk city at night, neon signs reflecting on wet streets, aerial view, volumetric fog, ultra detailed, 8k, blade runner aesthetic","type":"image","media":"assets/images/neon-cityscape.svg","contributor":"@example"},{"id":"product-macro-003","title":"Product Macro Shot","prompt":"Macro product photography of a minimalist watch on marble surface, soft studio lighting, high contrast shadows, commercial advertising style, clean composition","type":"image","media":"assets/images/product-macro.svg","contributor":"@example"},{"id":"ocean-timelapse-004","title":"Ocean Timelapse","prompt":"Timelapse of ocean waves crashing on rocky coastline at sunset, dramatic clouds moving fast, cinematic color grading, 4K, smooth motion","type":"video","media":"assets/videos/ocean-timelapse.mp4","contributor":"@example"},{"id":"abstract-motion-005","title":"Abstract Motion","prompt":"Abstract fluid motion graphics, iridescent liquid metal shapes morphing slowly, dark background, loopable, high-end motion design, 16:9","type":"video","media":"assets/videos/abstract-motion.mp4","contributor":"@example"}]}</script>
   <script src="js/prompts-data.js"></script>
   <script src="js/prompt.js" type="module"></script>
 </body>

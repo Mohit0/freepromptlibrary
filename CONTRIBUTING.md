@@ -1,50 +1,65 @@
 # Contributing to Prompt Library
 
-## Submit a prompt (recommended)
-
-Use the [submit page](https://mohit0.github.io/freepromptlibrary/submit.html):
-
-1. Fill in the form and attach your image or video
-2. Tap **Submit & create PR**
-3. A pull request is opened automatically
-4. Review and merge when ready
-
-No fork, branch, or git required.
-
-> **Maintainers:** The submit form needs the Cloudflare Worker deployed once. See [workers/README.md](workers/README.md).
+Thank you for contributing! Use the [submit page](https://mohit0.github.io/freepromptlibrary/submit.html) to build your JSON entry, then open a pull request on GitHub.
 
 ## What to submit
 
+Each submission includes:
+
 - **One image or video** — the AI-generated output
 - **The prompt** — the exact text used to generate it
-- **Metadata** — title, tags, and your GitHub username
+- **Metadata** — title and your GitHub username
 
-## Accepted formats
+## Step-by-step
 
-| Type  | Formats              | Max size |
-|-------|----------------------|----------|
-| Image | jpg, png, webp, gif, svg | 10 MB |
-| Video | mp4, webm, mov       | 50 MB    |
+### 1. Build your entry
 
-## Manual PR (optional)
+Open [submit.html](https://mohit0.github.io/freepromptlibrary/submit.html):
 
-Developers can still submit via a traditional pull request:
+1. Fill in the form and select your media file
+2. Copy or download the generated JSON entry
 
-1. Add media to `assets/images/` or `assets/videos/`
-2. Append an entry to `data/prompts.json` using `submissions/template.json`
-3. Run `node scripts/validate.js` and `node scripts/bundle-prompts.js`
-4. Open a pull request
+### 2. Fork and branch
 
-**Field rules:**
+Fork the repo on GitHub, then create a branch:
+
+```bash
+git clone https://github.com/<your-username>/freepromptlibrary.git
+cd freepromptlibrary
+git checkout -b add/my-prompt-name
+```
+
+### 3. Add your media file
+
+| Type  | Folder            | Formats              |
+|-------|-------------------|----------------------|
+| Image | `assets/images/`  | jpg, png, webp, gif, svg |
+| Video | `assets/videos/`  | mp4, webm, mov       |
+
+### 4. Add your entry to `data/prompts.json`
+
+Append your entry to the `items` array using `submissions/template.json` as a guide.
+
+### 5. Validate and open a PR
+
+```bash
+node scripts/validate.js
+node scripts/bundle-prompts.js
+git add assets/ data/prompts.json js/prompts-data.js index.html prompt.html submit.html
+git commit -m "Add prompt: Your Title"
+git push origin add/my-prompt-name
+```
+
+Open a pull request. The **Validate submissions** workflow runs automatically.
+
+## Field rules
 
 - `id` — unique, lowercase, hyphens only
 - `type` — `"image"` or `"video"`
 - `media` — path starting with `assets/`
-- `tags` — at least one tag
 - `contributor` — GitHub handle (e.g. `@username`)
 
 ## Tips
 
 - Be specific in prompts — style, lighting, lens, mood
-- Use relevant tags
 - Compress large files before submitting

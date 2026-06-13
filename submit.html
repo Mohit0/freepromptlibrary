@@ -16,7 +16,7 @@
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Submit your AI prompt and generated image or video. A pull request is created automatically.">
+  <meta name="description" content="Submit your AI prompt and generated image or video to the Prompt Library.">
   <title>Submit a Prompt — Prompt Library</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,15 +52,15 @@
       <p class="hero-eyebrow">Contribute</p>
       <h1>Submit a prompt</h1>
       <p class="hero-lead">
-        Fill in the form, attach your image or video, and submit. A pull request is created automatically — no fork or git required.
+        Build your entry here, then fork the repo on GitHub, add your media and JSON, and open a pull request.
       </p>
     </section>
 
     <div class="submit-layout submit-layout--single">
       <section class="submit-builder" aria-label="Submission form">
-        <form id="submit-form" class="submit-form" novalidate>
-          <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div id="remix-banner" class="remix-banner" hidden></div>
 
+        <form id="submit-form" class="submit-form" novalidate>
           <div class="form-row">
             <label for="title">Title</label>
             <input type="text" id="title" name="title" placeholder="Neon Alley in Rain" required>
@@ -69,6 +69,7 @@
           <div class="form-row">
             <label for="id">ID <span class="label-hint">lowercase, hyphens only</span></label>
             <input type="text" id="id" name="id" placeholder="neon-alley-rain" pattern="[a-z0-9][a-z0-9-]*" required>
+            <p id="id-status" class="field-status" hidden aria-live="polite"></p>
           </div>
 
           <div class="form-row">
@@ -81,7 +82,7 @@
 
           <div class="form-row">
             <label for="media-file">Your image or video</label>
-            <input type="file" id="media-file" class="file-input" accept="image/*,video/*" required>
+            <input type="file" id="media-file" class="file-input" accept="image/*,video/*">
             <span class="field-hint" id="media-hint">jpg, png, webp, gif, svg · mp4, webm, mov</span>
             <div id="media-preview" class="media-preview" hidden></div>
           </div>
@@ -92,59 +93,50 @@
           </div>
 
           <div class="form-row">
-            <label for="tags">Tags <span class="label-hint">comma-separated</span></label>
-            <input type="text" id="tags" name="tags" placeholder="cyberpunk, rain, night" required>
-          </div>
-
-          <div class="form-row">
             <label for="contributor">Your GitHub username</label>
             <input type="text" id="contributor" name="contributor" placeholder="@your-username" required>
           </div>
-
-          <div id="submit-status" class="submit-status" hidden aria-live="polite"></div>
-
-          <div class="submit-actions submit-actions--primary">
-            <button type="submit" class="btn btn-primary btn-large" id="submit-btn">Submit &amp; create PR</button>
-          </div>
         </form>
 
-        <details class="submit-preview-details">
-          <summary>Preview generated JSON</summary>
-          <div class="preview-block">
-            <div class="preview-header">
-              <h3>Your JSON entry</h3>
-              <div class="preview-actions">
-                <button type="button" class="btn btn-small" id="copy-json">Copy JSON</button>
-                <button type="button" class="btn btn-small btn-secondary" id="download-json">Download</button>
-              </div>
+        <div class="preview-block">
+          <div class="preview-header">
+            <h3>Your JSON entry</h3>
+            <div class="preview-actions">
+              <button type="button" class="btn btn-small" id="copy-json">Copy JSON</button>
+              <button type="button" class="btn btn-small btn-secondary" id="download-json">Download</button>
             </div>
-            <pre id="json-preview" class="json-preview" aria-live="polite"></pre>
           </div>
-        </details>
+          <pre id="json-preview" class="json-preview" aria-live="polite"></pre>
+        </div>
+
+        <div class="submit-actions">
+          <a href="https://github.com/Mohit0/freepromptlibrary/fork" class="btn btn-primary btn-large" target="_blank" rel="noopener noreferrer">Fork on GitHub</a>
+          <a href="CONTRIBUTING.md" class="btn btn-secondary">Full guide</a>
+        </div>
       </section>
 
       <section class="submit-steps" aria-label="Submission steps">
-        <h2>How it works</h2>
+        <h2>How to publish it</h2>
         <ol class="step-list">
           <li class="step-card">
             <span class="step-number">1</span>
             <div>
-              <h3>Fill in the form</h3>
-              <p>Add your prompt details and pick your image or video from your phone or laptop.</p>
+              <h3>Complete the form</h3>
+              <p>Pick your media file and fill in the prompt details. Copy or download the JSON.</p>
             </div>
           </li>
           <li class="step-card">
             <span class="step-number">2</span>
             <div>
-              <h3>Tap submit</h3>
-              <p>Your file is uploaded and a branch is created in the repository automatically.</p>
+              <h3>Fork &amp; add files</h3>
+              <p>Upload your media to <code>assets/images/</code> or <code>assets/videos/</code>, then add your entry to <code>data/prompts.json</code>.</p>
             </div>
           </li>
           <li class="step-card">
             <span class="step-number">3</span>
             <div>
-              <h3>Review &amp; merge the PR</h3>
-              <p>CI validates the submission. Merge when ready and it goes live in the gallery.</p>
+              <h3>Open a pull request</h3>
+              <p>GitHub validates your submission automatically. Merge when ready and it goes live.</p>
             </div>
           </li>
         </ol>
@@ -153,8 +145,8 @@
           <div class="info-card">
             <h3>Accepted formats</h3>
             <ul>
-              <li><strong>Images:</strong> jpg, png, webp, gif, svg (max 10 MB)</li>
-              <li><strong>Videos:</strong> mp4, webm, mov (max 50 MB)</li>
+              <li><strong>Images:</strong> jpg, png, webp, gif, svg</li>
+              <li><strong>Videos:</strong> mp4, webm, mov</li>
             </ul>
           </div>
           <div class="info-card">
@@ -174,6 +166,8 @@
     <p>Built for GitHub Pages · <a href="index.html#gallery">Browse gallery</a> · <a href="https://github.com/Mohit0/freepromptlibrary" target="_blank" rel="noopener noreferrer">GitHub</a></p>
   </footer>
 
+  <script id="prompts-inline" type="application/json">{"items":[{"id":"cinematic-portrait-001","title":"Cinematic Portrait","prompt":"Cinematic portrait of a woman in golden hour light, shallow depth of field, 85mm lens, warm tones, film grain, editorial fashion photography style","type":"image","media":"assets/images/cinematic-portrait.svg","contributor":"@example"},{"id":"neon-cityscape-002","title":"Neon Cityscape","prompt":"Futuristic cyberpunk city at night, neon signs reflecting on wet streets, aerial view, volumetric fog, ultra detailed, 8k, blade runner aesthetic","type":"image","media":"assets/images/neon-cityscape.svg","contributor":"@example"},{"id":"product-macro-003","title":"Product Macro Shot","prompt":"Macro product photography of a minimalist watch on marble surface, soft studio lighting, high contrast shadows, commercial advertising style, clean composition","type":"image","media":"assets/images/product-macro.svg","contributor":"@example"},{"id":"ocean-timelapse-004","title":"Ocean Timelapse","prompt":"Timelapse of ocean waves crashing on rocky coastline at sunset, dramatic clouds moving fast, cinematic color grading, 4K, smooth motion","type":"video","media":"assets/videos/ocean-timelapse.mp4","contributor":"@example"},{"id":"abstract-motion-005","title":"Abstract Motion","prompt":"Abstract fluid motion graphics, iridescent liquid metal shapes morphing slowly, dark background, loopable, high-end motion design, 16:9","type":"video","media":"assets/videos/abstract-motion.mp4","contributor":"@example"}]}</script>
+  <script src="js/prompts-data.js"></script>
   <script src="js/submit.js" type="module"></script>
 </body>
 </html>

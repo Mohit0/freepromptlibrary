@@ -1,20 +1,21 @@
-import { SUBMIT_API_URL } from "./config.js";
+import { copyText, findPromptById, loadPrompts } from "./share.js";
 
 const form = document.getElementById("submit-form");
 const preview = document.getElementById("json-preview");
 const copyBtn = document.getElementById("copy-json");
 const downloadBtn = document.getElementById("download-json");
-const submitBtn = document.getElementById("submit-btn");
-const submitStatus = document.getElementById("submit-status");
 const mediaFileInput = document.getElementById("media-file");
 const mediaPreview = document.getElementById("media-preview");
 const mediaHint = document.getElementById("media-hint");
 const titleInput = document.getElementById("title");
 const idInput = document.getElementById("id");
+const idStatus = document.getElementById("id-status");
+const remixBanner = document.getElementById("remix-banner");
 
 let mediaType = "image";
 let idTouched = false;
 let previewObjectUrl = null;
+let existingIds = new Set();
 
 function slugify(value) {
   return value
@@ -39,13 +40,10 @@ function getMediaPath(filename) {
 }
 
 function getFormData() {
-  const tags = form.tags.value
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
-
   const file = mediaFileInput?.files?.[0];
-  const media = file ? getMediaPath(file.name) : `${mediaType === "video" ? "assets/videos/" : "assets/images/"}your-file`;
+  const media = file
+    ? getMediaPath(file.name)
+    : `${mediaType === "video" ? "assets/videos/" : "assets/images/"}your-file`;
 
   return {
     id: form.id.value.trim(),
@@ -53,33 +51,81 @@ function getFormData() {
     prompt: form.prompt.value.trim(),
     type: mediaType,
     media,
-    tags,
     contributor: form.contributor.value.trim().startsWith("@")
       ? form.contributor.value.trim()
       : `@${form.contributor.value.trim()}`,
   };
 }
 
-function showStatus(type, message, link) {
-  if (!submitStatus) return;
-  submitStatus.hidden = false;
-  submitStatus.className = `submit-status submit-status--${type}`;
-  submitStatus.innerHTML = link
-    ? `${message} <a href="${link}" target="_blank" rel="noopener noreferrer">View pull request</a>`
-    : message;
-}
+function updateIdStatus() {
+  if (!idStatus || !idInput) return;
 
-function clearStatus() {
-  if (!submitStatus) {
+  const id = idInput.value.trim();
+  if (!id) {
+    idStatus.hidden = true;
+    idStatus.textContent = "";
+    idInput.classList.remove("input-warning");
     return;
   }
-  submitStatus.hidden = true;
-  submitStatus.textContent = "";
+
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(id)) {
+    idStatus.hidden = false;
+    idStatus.className = "field-status field-status--error";
+    idStatus.textContent = "Use lowercase letters, numbers, and hyphens only.";
+    idInput.classList.add("input-warning");
+    return;
+  }
+
+  if (existingIds.has(id)) {
+    idStatus.hidden = false;
+    idStatus.className = "field-status field-status--error";
+    idStatus.textContent = "This ID already exists — pick a unique one.";
+    idInput.classList.add("input-warning");
+    return;
+  }
+
+  idStatus.hidden = false;
+  idStatus.className = "field-status field-status--ok";
+  idStatus.textContent = "ID is available.";
+  idInput.classList.remove("input-warning");
+}
+
+function suggestRemixId(baseId) {
+  let candidate = `${baseId}-remix`;
+  let counter = 2;
+  while (existingIds.has(candidate)) {
+    candidate = `${baseId}-remix-${counter}`;
+    counter += 1;
+  }
+  return candidate;
+}
+
+async function applyRemixFromUrl() {
+  const sourceId = new URLSearchParams(window.location.search).get("from");
+  if (!sourceId) return;
+
+  const items = await loadPrompts();
+  const source = findPromptById(items, sourceId);
+  if (!source) return;
+
+  if (remixBanner) {
+    remixBanner.hidden = false;
+    remixBanner.innerHTML = `Remixing <strong>${source.title}</strong> — update the details and pick a new ID.`;
+  }
+
+  titleInput.value = `${source.title} (Remix)`;
+  idInput.value = suggestRemixId(source.id);
+  idTouched = true;
+  form.prompt.value = source.prompt;
+  setMediaType(source.type);
+  updateIdStatus();
+  renderPreview();
 }
 
 function renderPreview() {
   if (!preview || !form) return;
   preview.textContent = JSON.stringify(getFormData(), null, 2);
+  updateIdStatus();
 }
 
 function clearMediaPreview() {
@@ -107,7 +153,7 @@ function renderMediaPreview(file) {
 
   mediaPreview.hidden = false;
   if (mediaHint) {
-    mediaHint.textContent = `Will be saved as ${getMediaPath(file.name)}`;
+    mediaHint.textContent = `Save as ${getMediaPath(file.name)}`;
   }
 }
 
@@ -129,32 +175,6 @@ function setMediaType(type) {
   renderPreview();
 }
 
-function validateClientForm() {
-  const data = getFormData();
-  const file = mediaFileInput?.files?.[0];
-  const errors = [];
-
-  if (!data.title) errors.push("Title is required.");
-  if (!data.prompt) errors.push("Prompt is required.");
-  if (!data.tags.length) errors.push("Add at least one tag.");
-  if (!form.contributor.value.trim()) errors.push("GitHub username is required.");
-  if (!file) errors.push("Choose an image or video file.");
-  if (!data.id || !/^[a-z0-9][a-z0-9-]*$/.test(data.id)) {
-    errors.push("ID must be lowercase letters, numbers, and hyphens.");
-  }
-
-  return errors;
-}
-
-async function copyText(text, btn, doneLabel = "Copied!") {
-  await navigator.clipboard.writeText(text);
-  const original = btn.textContent;
-  btn.textContent = doneLabel;
-  setTimeout(() => {
-    btn.textContent = original;
-  }, 1500);
-}
-
 function downloadJson() {
   const data = getFormData();
   const blob = new Blob([`${JSON.stringify(data, null, 2)}\n`], { type: "application/json" });
@@ -164,64 +184,6 @@ function downloadJson() {
   link.download = `${data.id || "prompt-entry"}.json`;
   link.click();
   URL.revokeObjectURL(url);
-}
-
-async function submitForm(event) {
-  event.preventDefault();
-  clearStatus();
-
-  const errors = validateClientForm();
-  if (errors.length) {
-    showStatus("error", errors.join(" "));
-    return;
-  }
-
-  if (!SUBMIT_API_URL) {
-    showStatus(
-      "error",
-      "Submission API is not configured yet. The site owner needs to deploy the Cloudflare Worker and set SUBMIT_API_URL in js/config.js."
-    );
-    return;
-  }
-
-  const payload = new FormData();
-  const data = getFormData();
-  payload.append("title", data.title);
-  payload.append("id", data.id);
-  payload.append("prompt", data.prompt);
-  payload.append("type", data.type);
-  payload.append("tags", data.tags.join(", "));
-  payload.append("contributor", data.contributor);
-  payload.append("media", mediaFileInput.files[0]);
-  payload.append("website", "");
-
-  const originalLabel = submitBtn.textContent;
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Submitting…";
-
-  try {
-    const response = await fetch(SUBMIT_API_URL, {
-      method: "POST",
-      body: payload,
-    });
-
-    const result = await response.json();
-    if (!response.ok || !result.ok) {
-      throw new Error(result.error || "Submission failed.");
-    }
-
-    showStatus("success", "Pull request created! ", result.prUrl);
-    form.reset();
-    idTouched = false;
-    clearMediaPreview();
-    setMediaType("image");
-    renderPreview();
-  } catch (error) {
-    showStatus("error", error.message || "Submission failed. Please try again.");
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalLabel;
-  }
 }
 
 function bindMobileNav() {
@@ -236,15 +198,20 @@ function bindMobileNav() {
   });
 }
 
-if (form) {
-  if (!SUBMIT_API_URL && submitBtn) {
-    showStatus(
-      "info",
-      "One-time setup needed: deploy the submission API (see workers/README.md), then add its URL to js/config.js."
-    );
+async function init() {
+  try {
+    const items = await loadPrompts();
+    existingIds = new Set(items.map((item) => item.id));
+  } catch (error) {
+    console.warn("Could not load prompts for duplicate check.", error);
   }
 
-  form.addEventListener("submit", submitForm);
+  if (!form) {
+    bindMobileNav();
+    return;
+  }
+
+  await applyRemixFromUrl();
 
   titleInput.addEventListener("input", () => {
     if (!idTouched) {
@@ -284,7 +251,7 @@ if (form) {
   });
 
   if (copyBtn) {
-    copyBtn.addEventListener("click", () => copyText(preview.textContent, copyBtn, "Copied!"));
+    copyBtn.addEventListener("click", () => copyText(preview.textContent, copyBtn, "Copy JSON", "JSON copied"));
   }
 
   if (downloadBtn) {
@@ -292,6 +259,7 @@ if (form) {
   }
 
   renderPreview();
+  bindMobileNav();
 }
 
-bindMobileNav();
+init();

@@ -45,8 +45,31 @@ export function getIdFromLocation(location = window.location) {
   return null;
 }
 
-export async function copyText(text, btn, originalLabel = "Copy") {
+let toastTimer = null;
+
+export function showToast(message) {
+  let toast = document.getElementById("app-toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "app-toast";
+    toast.className = "app-toast";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.classList.add("app-toast--visible");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("app-toast--visible"), 2200);
+}
+
+export async function copyText(text, btn, originalLabel = "Copy", toastMessage = "Copied to clipboard") {
   await navigator.clipboard.writeText(text);
+  showToast(toastMessage);
+
+  if (!btn) return;
+
   const original = btn.textContent;
   btn.textContent = "Copied!";
   setTimeout(() => {
@@ -62,14 +85,100 @@ export function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
-export function renderMedia(item, { autoplay = false, className = "" } = {}) {
+export function renderMedia(item, { autoplay = false, className = "", lazy = true } = {}) {
   const cls = className ? ` class="${className}"` : "";
   const src = escapeHtml(resolveSitePath(item.media));
 
   if (item.type === "video") {
+    if (lazy && !autoplay) {
+      return `<video data-lazy-src="${src}"${cls} muted preload="none" playsinline></video>`;
+    }
     return `<video src="${src}"${cls} ${autoplay ? "controls autoplay muted loop" : "muted preload=\"metadata\""} playsinline></video>`;
   }
-  return `<img src="${src}" alt="${escapeHtml(item.title)}"${cls} loading="lazy">`;
+
+  const loadingAttrs = lazy ? ' loading="lazy" decoding="async"' : "";
+  return `<img src="${src}" alt="${escapeHtml(item.title)}"${cls}${loadingAttrs}>`;
+}
+
+let lazyObserver = null;
+
+export function observeLazyMedia(root = document) {
+  const videos = root.querySelectorAll("video[data-lazy-src]");
+  if (!videos.length) return;
+
+  if (!("IntersectionObserver" in window)) {
+    videos.forEach((video) => {
+      video.src = video.dataset.lazySrc;
+      video.preload = "metadata";
+      delete video.dataset.lazySrc;
+    });
+    return;
+  }
+
+  if (!lazyObserver) {
+    lazyObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const video = entry.target;
+          if (!video.dataset.lazySrc) return;
+          video.src = video.dataset.lazySrc;
+          video.preload = "metadata";
+          delete video.dataset.lazySrc;
+          lazyObserver.unobserve(video);
+        });
+      },
+      { rootMargin: "200px" }
+    );
+  }
+
+  videos.forEach((video) => lazyObserver.observe(video));
+}
+
+function upsertMeta(selector, create, content) {
+  let el = document.querySelector(selector);
+  if (!el) {
+    el = create();
+    document.head.appendChild(el);
+  }
+  el.content = content;
+}
+
+export function setOgTags(item) {
+  const title = `${item.title} — Prompt Library`;
+  const description = item.prompt.length > 200 ? `${item.prompt.slice(0, 197)}…` : item.prompt;
+  const pageUrl = getShareUrl(item.id);
+  const imageUrl = item.type === "image" ? resolveSitePath(item.media) : null;
+
+  document.title = title;
+
+  upsertMeta('meta[name="description"]', () => {
+    const el = document.createElement("meta");
+    el.name = "description";
+    return el;
+  }, description);
+
+  const ogProps = [
+    ["og:title", title],
+    ["og:description", description],
+    ["og:type", "article"],
+    ["og:url", pageUrl],
+    ["twitter:card", imageUrl ? "summary_large_image" : "summary"],
+    ["twitter:title", title],
+    ["twitter:description", description],
+  ];
+
+  if (imageUrl) {
+    ogProps.push(["og:image", imageUrl], ["twitter:image", imageUrl]);
+  }
+
+  ogProps.forEach(([property, content]) => {
+    upsertMeta(`meta[property="${property}"]`, () => {
+      const el = document.createElement("meta");
+      el.setAttribute("property", property);
+      return el;
+    }, content);
+  });
 }
 
 function normalizePromptItems(items) {

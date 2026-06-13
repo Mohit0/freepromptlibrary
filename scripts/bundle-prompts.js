@@ -7,6 +7,7 @@ const OUT_FILE = path.join(ROOT, "js", "prompts-data.js");
 const HTML_FILES = [
   path.join(ROOT, "index.html"),
   path.join(ROOT, "prompt.html"),
+  path.join(ROOT, "submit.html"),
 ];
 
 const data = JSON.parse(fs.readFileSync(JSON_FILE, "utf8"));

@@ -4,6 +4,5 @@
   "prompt": "Your full AI prompt text here. Be specific about style, lighting, composition, and any technical details.",
   "type": "image",
   "media": "assets/images/your-file.jpg",
-  "tags": ["tag-one", "tag-two"],
   "contributor": "@your-github-username"
 }

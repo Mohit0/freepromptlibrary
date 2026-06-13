@@ -64,7 +64,7 @@
               <path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
             <label for="search" class="visually-hidden">Search prompts</label>
-            <input type="search" id="search" placeholder="Search prompts…" autocomplete="off">
+            <input type="search" id="search" placeholder="Search prompts… (press /)" autocomplete="off">
             <button type="button" class="search-clear" id="search-clear" aria-label="Clear search" hidden>&times;</button>
           </div>
 
@@ -73,6 +73,12 @@
               <button class="filter-btn active" data-filter="all">All</button>
               <button class="filter-btn" data-filter="image"><span class="label-full">Images</span><span class="label-short">Img</span></button>
               <button class="filter-btn" data-filter="video"><span class="label-full">Videos</span><span class="label-short">Vid</span></button>
+            </div>
+
+            <div class="collection-filter" role="group" aria-label="Your collections">
+              <button type="button" class="collection-btn" data-collection="favorites" title="Saved prompts">★ Saved</button>
+              <button type="button" class="collection-btn" data-collection="recent" title="Recently viewed">Recent</button>
+              <button type="button" class="collection-btn collection-btn--random" id="random-prompt" title="Open a random prompt">Random</button>
             </div>
 
             <button
@@ -111,10 +117,6 @@
             </div>
 
             <p class="result-count" id="result-count" aria-live="polite"></p>
-          </div>
-
-          <div class="toolbar-meta">
-            <div id="tag-filters" class="tag-filters" aria-label="Filter by tag"></div>
           </div>
 
           <div id="active-filters" class="active-filters" hidden>
@@ -159,14 +161,19 @@
   <dialog id="detail-modal" class="detail-modal">
     <div class="modal-inner">
       <button class="modal-close" aria-label="Close" data-close>&times;</button>
-      <div class="modal-media-wrap">
+      <div class="modal-media-wrap" id="modal-media-wrap">
         <button class="modal-nav modal-nav--prev" id="modal-prev" aria-label="Previous prompt" hidden>‹</button>
         <button class="modal-nav modal-nav--next" id="modal-next" aria-label="Next prompt" hidden>›</button>
+        <button type="button" class="modal-expand" id="modal-expand" aria-label="View full screen" title="Full screen">⛶</button>
         <div class="modal-media" id="modal-media"></div>
       </div>
       <div class="modal-content">
         <div class="modal-meta">
           <span class="badge" id="modal-type"></span>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-small modal-favorite" id="modal-favorite">☆ Save</button>
+            <a href="submit.html" class="btn btn-small btn-secondary" id="modal-remix">Remix</a>
+          </div>
         </div>
         <h3 id="modal-title"></h3>
 
@@ -185,13 +192,17 @@
           </div>
           <pre id="modal-prompt"></pre>
         </div>
-        <div class="modal-tags" id="modal-tags"></div>
         <p class="modal-contributor" id="modal-contributor"></p>
       </div>
     </div>
   </dialog>
 
-  <script id="prompts-inline" type="application/json">{"items":[{"id":"cinematic-portrait-001","title":"Cinematic Portrait","prompt":"Cinematic portrait of a woman in golden hour light, shallow depth of field, 85mm lens, warm tones, film grain, editorial fashion photography style","type":"image","media":"assets/images/cinematic-portrait.svg","tags":["portrait","cinematic","photography"],"contributor":"@example"},{"id":"neon-cityscape-002","title":"Neon Cityscape","prompt":"Futuristic cyberpunk city at night, neon signs reflecting on wet streets, aerial view, volumetric fog, ultra detailed, 8k, blade runner aesthetic","type":"image","media":"assets/images/neon-cityscape.svg","tags":["cyberpunk","cityscape","neon"],"contributor":"@example"},{"id":"product-macro-003","title":"Product Macro Shot","prompt":"Macro product photography of a minimalist watch on marble surface, soft studio lighting, high contrast shadows, commercial advertising style, clean composition","type":"image","media":"assets/images/product-macro.svg","tags":["product","macro","commercial"],"contributor":"@example"},{"id":"ocean-timelapse-004","title":"Ocean Timelapse","prompt":"Timelapse of ocean waves crashing on rocky coastline at sunset, dramatic clouds moving fast, cinematic color grading, 4K, smooth motion","type":"video","media":"assets/videos/ocean-timelapse.mp4","tags":["nature","timelapse","ocean"],"contributor":"@example"},{"id":"abstract-motion-005","title":"Abstract Motion","prompt":"Abstract fluid motion graphics, iridescent liquid metal shapes morphing slowly, dark background, loopable, high-end motion design, 16:9","type":"video","media":"assets/videos/abstract-motion.mp4","tags":["abstract","motion","3d"],"contributor":"@example"}]}</script>
+  <dialog id="media-lightbox" class="media-lightbox">
+    <button class="media-lightbox-close" aria-label="Close" data-lightbox-close>&times;</button>
+    <div id="media-lightbox-content" class="media-lightbox-content"></div>
+  </dialog>
+
+  <script id="prompts-inline" type="application/json">{"items":[{"id":"cinematic-portrait-001","title":"Cinematic Portrait","prompt":"Cinematic portrait of a woman in golden hour light, shallow depth of field, 85mm lens, warm tones, film grain, editorial fashion photography style","type":"image","media":"assets/images/cinematic-portrait.svg","contributor":"@example"},{"id":"neon-cityscape-002","title":"Neon Cityscape","prompt":"Futuristic cyberpunk city at night, neon signs reflecting on wet streets, aerial view, volumetric fog, ultra detailed, 8k, blade runner aesthetic","type":"image","media":"assets/images/neon-cityscape.svg","contributor":"@example"},{"id":"product-macro-003","title":"Product Macro Shot","prompt":"Macro product photography of a minimalist watch on marble surface, soft studio lighting, high contrast shadows, commercial advertising style, clean composition","type":"image","media":"assets/images/product-macro.svg","contributor":"@example"},{"id":"ocean-timelapse-004","title":"Ocean Timelapse","prompt":"Timelapse of ocean waves crashing on rocky coastline at sunset, dramatic clouds moving fast, cinematic color grading, 4K, smooth motion","type":"video","media":"assets/videos/ocean-timelapse.mp4","contributor":"@example"},{"id":"abstract-motion-005","title":"Abstract Motion","prompt":"Abstract fluid motion graphics, iridescent liquid metal shapes morphing slowly, dark background, loopable, high-end motion design, 16:9","type":"video","media":"assets/videos/abstract-motion.mp4","contributor":"@example"}]}</script>
   <script src="js/prompts-data.js"></script>
   <script src="js/app.js" type="module"></script>
 </body>

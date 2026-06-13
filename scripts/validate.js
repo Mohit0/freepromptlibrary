@@ -12,7 +12,6 @@ const REQUIRED_FIELDS = [
   "prompt",
   "type",
   "media",
-  "tags",
   "contributor",
 ];
 
@@ -54,10 +53,6 @@ function validateItem(item, index, seenIds) {
 
   if (!VALID_TYPES.has(item.type)) {
     fail(`${label}: type must be "image" or "video"`);
-  }
-
-  if (!Array.isArray(item.tags) || item.tags.length === 0) {
-    fail(`${label}: tags must be a non-empty array`);
   }
 
   if (typeof item.media !== "string" || !item.media.startsWith("assets/")) {
