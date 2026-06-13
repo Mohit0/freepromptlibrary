@@ -1,4 +1,5 @@
-{
+// Auto-generated from data/prompts.json — do not edit directly
+export default {
   "items": [
     {
       "id": "cinematic-portrait-001",
@@ -6,7 +7,11 @@
       "prompt": "Cinematic portrait of a woman in golden hour light, shallow depth of field, 85mm lens, warm tones, film grain, editorial fashion photography style",
       "type": "image",
       "media": "assets/images/cinematic-portrait.svg",
-      "tags": ["portrait", "cinematic", "photography"],
+      "tags": [
+        "portrait",
+        "cinematic",
+        "photography"
+      ],
       "contributor": "@example"
     },
     {
@@ -15,7 +20,11 @@
       "prompt": "Futuristic cyberpunk city at night, neon signs reflecting on wet streets, aerial view, volumetric fog, ultra detailed, 8k, blade runner aesthetic",
       "type": "image",
       "media": "assets/images/neon-cityscape.svg",
-      "tags": ["cyberpunk", "cityscape", "neon"],
+      "tags": [
+        "cyberpunk",
+        "cityscape",
+        "neon"
+      ],
       "contributor": "@example"
     },
     {
@@ -24,7 +33,11 @@
       "prompt": "Macro product photography of a minimalist watch on marble surface, soft studio lighting, high contrast shadows, commercial advertising style, clean composition",
       "type": "image",
       "media": "assets/images/product-macro.svg",
-      "tags": ["product", "macro", "commercial"],
+      "tags": [
+        "product",
+        "macro",
+        "commercial"
+      ],
       "contributor": "@example"
     },
     {
@@ -33,7 +46,11 @@
       "prompt": "Timelapse of ocean waves crashing on rocky coastline at sunset, dramatic clouds moving fast, cinematic color grading, 4K, smooth motion",
       "type": "video",
       "media": "assets/videos/ocean-timelapse.mp4",
-      "tags": ["nature", "timelapse", "ocean"],
+      "tags": [
+        "nature",
+        "timelapse",
+        "ocean"
+      ],
       "contributor": "@example"
     },
     {
@@ -42,8 +59,12 @@
       "prompt": "Abstract fluid motion graphics, iridescent liquid metal shapes morphing slowly, dark background, loopable, high-end motion design, 16:9",
       "type": "video",
       "media": "assets/videos/abstract-motion.mp4",
-      "tags": ["abstract", "motion", "3d"],
+      "tags": [
+        "abstract",
+        "motion",
+        "3d"
+      ],
       "contributor": "@example"
     }
   ]
-}
+};

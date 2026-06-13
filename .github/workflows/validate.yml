@@ -18,3 +18,6 @@ jobs:
 
       - name: Validate prompts and media
         run: node scripts/validate.js
+
+      - name: Bundle prompts data
+        run: node scripts/bundle-prompts.js

@@ -27,9 +27,12 @@ Then open [http://localhost:8080](http://localhost:8080).
 ## Project structure
 
 ```
-├── index.html              # Main gallery page
+├── index.html              # Gallery homepage
+├── prompt.html             # Shareable page for a single prompt
+├── submit.html             # Submission guide & JSON builder
 ├── css/style.css           # Styles
 ├── js/app.js               # Gallery logic
+├── js/submit.js            # Submission page logic
 ├── data/prompts.json       # All prompt entries (edited via PR)
 ├── assets/
 │   ├── images/             # Image files
@@ -52,11 +55,34 @@ Quick steps:
 
 ## GitHub Pages setup
 
-After pushing to GitHub:
+After pushing to GitHub, enable Pages **before** the deploy workflow can succeed:
 
-1. Go to **Settings → Pages**
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**
-3. Push to `main` — the deploy workflow publishes the site automatically
+1. Open your repo on GitHub
+2. Go to **Settings → Pages**
+3. Under **Build and deployment**, set **Source** to **GitHub Actions** (not "Deploy from a branch")
+4. If you don't see "GitHub Actions" as an option, click **Configure** or visit the **Actions** tab and run the **Deploy to GitHub Pages** workflow once — GitHub may prompt you to enable Pages
+5. Re-run the failed workflow: **Actions → Deploy to GitHub Pages → Re-run all jobs**
+
+Each prompt gets a unique shareable URL:
+
+```
+https://<your-username>.github.io/<repo-name>/prompt.html?id=<prompt-id>
+```
+
+Example: `prompt.html?id=cinematic-portrait-001`
+
+Users can copy the link from gallery cards, the detail modal, or the dedicated prompt page.
+
+### Deploy workflow fails with "Get Pages site failed"
+
+This means GitHub Pages is not enabled yet, or the source is still set to **Deploy from a branch** instead of **GitHub Actions**.
+
+Fix:
+
+1. **Settings → Pages → Build and deployment → Source → GitHub Actions**
+2. **Actions → Deploy to GitHub Pages → Re-run all jobs**
+
+For organization repos, an org admin may need to allow GitHub Pages under **Org Settings → Pages**.
 
 ## Validation
 
@@ -66,7 +92,7 @@ Run locally before opening a PR:
 node scripts/validate.js
 ```
 
-Checks include: required fields, unique IDs, valid dates, media file exists, and correct file extensions.
+Checks include: required fields, unique IDs, media file exists, and correct file extensions.
 
 ## License
 

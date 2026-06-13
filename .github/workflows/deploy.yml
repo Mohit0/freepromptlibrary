@@ -1,3 +1,8 @@
+# Deploys the static site to GitHub Pages.
+#
+# REQUIRED ONE-TIME SETUP (or this workflow fails with "Get Pages site failed"):
+#   Repo → Settings → Pages → Build and deployment → Source → "GitHub Actions"
+# Then re-run this workflow from the Actions tab.
 name: Deploy to GitHub Pages
 
 on:
@@ -23,6 +28,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Bundle prompts data
+        run: node scripts/bundle-prompts.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

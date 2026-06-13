@@ -2,6 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>
+    (function () {
+      var path = window.location.pathname;
+      if (path && !path.endsWith("/") && !/\.html$/i.test(path)) {
+        window.location.replace(path + "/" + window.location.search + window.location.hash);
+        return;
+      }
+      var basePath = path.endsWith("/") ? path : path.slice(0, path.lastIndexOf("/") + 1);
+      var baseEl = document.createElement("base");
+      baseEl.href = basePath || "/";
+      document.head.appendChild(baseEl);
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A community prompt library for AI-generated images and videos. Browse prompts, preview results, and contribute via pull request.">
   <title>Prompt Library — AI Image & Video Prompts</title>
@@ -13,103 +26,139 @@
 <body>
   <header class="site-header">
     <nav class="nav">
-      <a href="#" class="logo">
+      <a href="index.html" class="logo">
         <span class="logo-mark" aria-hidden="true">◇</span>
         Prompt Library
       </a>
       <div class="nav-links">
-        <a href="#gallery">Gallery</a>
-        <a href="#contribute">Contribute</a>
+        <a href="index.html#gallery" class="nav-active">Gallery</a>
+        <a href="submit.html">Submit</a>
         <a href="https://github.com/" class="nav-github" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span>
+      </button>
     </nav>
+    <div id="mobile-menu" class="mobile-menu" hidden>
+      <a href="index.html#gallery" class="nav-active">Gallery</a>
+      <a href="submit.html">Submit</a>
+      <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </div>
 
-    <section class="hero">
+    <section class="hero hero--compact">
       <p class="hero-eyebrow">Community-curated AI prompts</p>
       <h1>Generate images &amp; videos like these</h1>
       <p class="hero-lead">
-        Browse real prompts paired with their outputs. Copy what works, remix it,
-        and submit your own creations through a pull request.
+        Browse real prompts paired with their outputs. Copy what works and remix it.
       </p>
-      <div class="hero-actions">
-        <a href="#gallery" class="btn btn-primary">Explore gallery</a>
-        <a href="#contribute" class="btn btn-secondary">Submit a prompt</a>
-      </div>
-      <dl class="hero-stats" id="hero-stats">
-        <div>
-          <dt id="stat-total">—</dt>
-          <dd>Prompts</dd>
-        </div>
-        <div>
-          <dt id="stat-images">—</dt>
-          <dd>Images</dd>
-        </div>
-        <div>
-          <dt id="stat-videos">—</dt>
-          <dd>Videos</dd>
-        </div>
-      </dl>
     </section>
   </header>
 
   <main>
     <section id="gallery" class="gallery-section">
-      <div class="section-header">
-        <h2>Gallery</h2>
-        <p>Filter by media type or search prompts, tags, and models.</p>
+      <div class="gallery-toolbar" id="gallery-toolbar">
+        <div class="toolbar-row">
+          <div class="search-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+              <path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <label for="search" class="visually-hidden">Search prompts</label>
+            <input type="search" id="search" placeholder="Search prompts and tags…" autocomplete="off">
+            <button type="button" class="search-clear" id="search-clear" aria-label="Clear search" hidden>&times;</button>
+          </div>
+
+          <div class="toolbar-actions">
+            <div class="filter-group" role="group" aria-label="Filter by media type">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="image">Images</button>
+              <button class="filter-btn" data-filter="video">Videos</button>
+            </div>
+
+            <label class="sort-wrap">
+              <span class="visually-hidden">Sort by</span>
+              <select id="sort" aria-label="Sort prompts">
+                <option value="default">Default order</option>
+                <option value="title">Title A–Z</option>
+              </select>
+            </label>
+
+            <div class="view-toggle" role="group" aria-label="Gallery view">
+              <button class="view-btn active" data-view="grid" aria-label="Grid view" title="Grid view">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+              </button>
+              <button class="view-btn" data-view="list" aria-label="List view" title="List view">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="1" y="2" width="14" height="2.5" rx="1"/><rect x="1" y="7" width="14" height="2.5" rx="1"/><rect x="1" y="12" width="14" height="2.5" rx="1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar-meta">
+          <div id="tag-filters" class="tag-filters" aria-label="Filter by tag"></div>
+          <p class="result-count" id="result-count" aria-live="polite"></p>
+        </div>
+
+        <div id="active-filters" class="active-filters" hidden>
+          <span class="active-filters-label">Active:</span>
+          <div id="filter-chips" class="filter-chips"></div>
+          <button type="button" class="clear-filters" id="clear-filters">Clear all</button>
+        </div>
       </div>
 
-      <div class="controls">
-        <div class="search-wrap">
-          <label for="search" class="visually-hidden">Search prompts</label>
-          <input type="search" id="search" placeholder="Search prompts, tags, models…" autocomplete="off">
-        </div>
-        <div class="filter-group" role="group" aria-label="Filter by media type">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="image">Images</button>
-          <button class="filter-btn" data-filter="video">Videos</button>
-        </div>
+      <div id="gallery-loading" class="gallery-loading" aria-hidden="true">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card skeleton-card--wide"></div>
+        <div class="skeleton-card"></div>
       </div>
-
-      <div id="tag-filters" class="tag-filters" aria-label="Filter by tag"></div>
-
       <div id="gallery-grid" class="gallery-grid" aria-live="polite"></div>
-      <p id="empty-state" class="empty-state" hidden>No prompts match your filters.</p>
-    </section>
-
-    <section id="contribute" class="contribute-section">
-      <div class="contribute-card">
-        <h2>Contribute via Pull Request</h2>
-        <p>
-          This site is static and community-driven. Add your prompt, media file, and metadata
-          in a PR — once merged, it appears in the gallery automatically.
-        </p>
-        <ol class="contribute-steps">
-          <li>Fork the repository and create a branch.</li>
-          <li>Add your image or video to <code>assets/images/</code> or <code>assets/videos/</code>.</li>
-          <li>Copy <code>submissions/template.json</code> and add your entry to <code>data/prompts.json</code>.</li>
-          <li>Open a pull request. CI will validate your submission.</li>
-        </ol>
-        <a href="CONTRIBUTING.md" class="btn btn-primary">Read full guide</a>
+      <div id="empty-state" class="empty-state" hidden>
+        <div class="empty-icon" aria-hidden="true">◇</div>
+        <h3>No prompts found</h3>
+        <p>Try adjusting your search or filters, or be the first to contribute.</p>
+        <div class="empty-actions">
+          <button type="button" class="btn btn-secondary" id="empty-clear">Clear filters</button>
+          <a href="submit.html" class="btn btn-primary">Submit a prompt</a>
+        </div>
       </div>
     </section>
+
+    <aside class="cta-banner">
+      <div>
+        <h2>Have a prompt to share?</h2>
+        <p>Submit your AI-generated image or video with the exact prompt you used.</p>
+      </div>
+      <a href="submit.html" class="btn btn-primary">Submit a prompt</a>
+    </aside>
   </main>
 
   <footer class="site-footer">
-    <p>Built for GitHub Pages · Open source · Submit prompts via pull request</p>
+    <p>Built for GitHub Pages · <a href="submit.html">Submit a prompt</a> · Open source</p>
   </footer>
 
   <dialog id="detail-modal" class="detail-modal">
     <div class="modal-inner">
       <button class="modal-close" aria-label="Close" data-close>&times;</button>
-      <div class="modal-media" id="modal-media"></div>
+      <div class="modal-media-wrap">
+        <button class="modal-nav modal-nav--prev" id="modal-prev" aria-label="Previous prompt" hidden>‹</button>
+        <button class="modal-nav modal-nav--next" id="modal-next" aria-label="Next prompt" hidden>›</button>
+        <div class="modal-media" id="modal-media"></div>
+      </div>
       <div class="modal-content">
         <div class="modal-meta">
           <span class="badge" id="modal-type"></span>
-          <span class="modal-date" id="modal-date"></span>
         </div>
         <h3 id="modal-title"></h3>
-        <p class="modal-model" id="modal-model"></p>
+
+        <div class="share-block share-block--modal">
+          <label for="modal-share-url" class="share-label">Share link</label>
+          <div class="share-row">
+            <input type="text" id="modal-share-url" class="share-input" readonly>
+            <button type="button" class="btn btn-small btn-primary" id="copy-link">Copy link</button>
+          </div>
+        </div>
+
         <div class="prompt-block">
           <div class="prompt-header">
             <h4>Prompt</h4>

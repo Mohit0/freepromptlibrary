@@ -5,7 +5,5 @@
   "type": "image",
   "media": "assets/images/your-file.jpg",
   "tags": ["tag-one", "tag-two"],
-  "model": "Model name and version",
-  "createdAt": "YYYY-MM-DD",
   "contributor": "@your-github-username"
 }

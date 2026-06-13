@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      var path = window.location.pathname;
+      if (path && !path.endsWith("/") && !/\.html$/i.test(path)) {
+        window.location.replace(path + "/" + window.location.search + window.location.hash);
+        return;
+      }
+      var basePath = path.endsWith("/") ? path : path.slice(0, path.lastIndexOf("/") + 1);
+      var baseEl = document.createElement("base");
+      baseEl.href = basePath || "/";
+      document.head.appendChild(baseEl);
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="View a shared AI prompt and its generated image or video.">
+  <title>Prompt — Prompt Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-prompt">
+  <header class="site-header site-header--compact">
+    <nav class="nav">
+      <a href="index.html" class="logo">
+        <span class="logo-mark" aria-hidden="true">◇</span>
+        Prompt Library
+      </a>
+      <div class="nav-links">
+        <a href="index.html#gallery">Gallery</a>
+        <a href="submit.html">Submit</a>
+        <a href="https://github.com/" class="nav-github" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="prompt-page" id="prompt-page">
+    <div id="prompt-loading" class="prompt-loading">Loading prompt…</div>
+
+    <div id="prompt-error" class="prompt-error" hidden>
+      <div class="empty-icon" aria-hidden="true">◇</div>
+      <h1>Prompt not found</h1>
+      <p>This link may be broken or the prompt was removed.</p>
+      <a href="index.html#gallery" class="btn btn-primary">Browse gallery</a>
+    </div>
+
+    <article id="prompt-content" class="prompt-content" hidden>
+      <a href="index.html#gallery" class="back-link">← Back to gallery</a>
+
+      <div class="prompt-layout">
+        <div class="prompt-media-wrap">
+          <div id="prompt-media" class="prompt-media"></div>
+        </div>
+
+        <div class="prompt-details">
+          <div class="prompt-meta">
+            <span class="badge" id="prompt-type"></span>
+          </div>
+          <h1 id="prompt-title"></h1>
+
+          <div class="share-block">
+            <label for="share-url" class="share-label">Share link</label>
+            <div class="share-row">
+              <input type="text" id="share-url" class="share-input" readonly>
+              <button type="button" class="btn btn-primary" id="copy-link">Copy link</button>
+            </div>
+          </div>
+
+          <div class="prompt-block">
+            <div class="prompt-header">
+              <h2>Prompt</h2>
+              <button type="button" class="btn btn-small" id="copy-prompt">Copy prompt</button>
+            </div>
+            <pre id="prompt-text"></pre>
+          </div>
+
+          <div class="prompt-tags" id="prompt-tags"></div>
+          <p class="prompt-contributor" id="prompt-contributor"></p>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p>Built for GitHub Pages · <a href="index.html#gallery">Browse gallery</a></p>
+  </footer>
+
+  <script src="js/share.js" type="module"></script>
+  <script src="js/prompt.js" type="module"></script>
+</body>
+</html>

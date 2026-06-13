@@ -8,7 +8,7 @@ Each submission includes:
 
 - **One image or video** — the AI-generated output
 - **The prompt** — the exact text used to generate it
-- **Metadata** — title, tags, model, date, and your GitHub username
+- **Metadata** — title, tags, and your GitHub username
 
 ## Step-by-step
 
@@ -43,8 +43,6 @@ Copy the structure from `submissions/template.json` and append your entry to the
   "type": "image",
   "media": "assets/images/neon-alley-rain.jpg",
   "tags": ["cyberpunk", "rain", "night"],
-  "model": "Midjourney v6",
-  "createdAt": "2025-06-13",
   "contributor": "@your-github-username"
 }
 ```
@@ -55,16 +53,22 @@ Copy the structure from `submissions/template.json` and append your entry to the
 - `type` — `"image"` or `"video"`
 - `media` — path relative to repo root, must start with `assets/`
 - `tags` — at least one tag
-- `createdAt` — `YYYY-MM-DD` format
 - `contributor` — your GitHub handle (e.g. `@username`)
 
 ### 4. Validate locally
 
 ```bash
 node scripts/validate.js
+node scripts/bundle-prompts.js
 ```
 
 Fix any errors before pushing.
+
+```bash
+node scripts/bundle-prompts.js
+```
+
+This updates `js/prompts-data.js` so the live site can load prompts without a network request.
 
 ### 5. Open a pull request
 
@@ -89,7 +93,6 @@ Open a PR on GitHub. The **Validate submissions** workflow runs automatically. O
 
 - **Be specific in prompts** — include style, lighting, lens, mood, and technical details
 - **Use relevant tags** — helps others find similar prompts
-- **Note the model** — include version when possible (e.g. "Runway Gen-3 Alpha")
 - **Keep files reasonably sized** — compress large images/videos before submitting
 
 ## Questions?

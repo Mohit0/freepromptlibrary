@@ -13,8 +13,6 @@ const REQUIRED_FIELDS = [
   "type",
   "media",
   "tags",
-  "model",
-  "createdAt",
   "contributor",
 ];
 
@@ -29,10 +27,6 @@ function fail(message) {
 
 function warn(message) {
   console.warn(`⚠️  ${message}`);
-}
-
-function isValidDate(value) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value));
 }
 
 function validateItem(item, index, seenIds) {
@@ -64,10 +58,6 @@ function validateItem(item, index, seenIds) {
 
   if (!Array.isArray(item.tags) || item.tags.length === 0) {
     fail(`${label}: tags must be a non-empty array`);
-  }
-
-  if (!isValidDate(item.createdAt)) {
-    fail(`${label}: createdAt must be YYYY-MM-DD`);
   }
 
   if (typeof item.media !== "string" || !item.media.startsWith("assets/")) {
