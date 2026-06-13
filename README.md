@@ -6,18 +6,9 @@ A static, community-driven gallery of AI prompts paired with their generated ima
 
 https://mohit0.github.io/freepromptlibrary/
 
-## Submit a prompt (no git required)
+## Submit a prompt
 
-1. Open the **[submission form](https://github.com/Mohit0/freepromptlibrary/issues/new?template=prompt-submission.yml)** on GitHub (works on mobile)
-2. Fill in the fields and **attach your image or video** (paperclip button)
-3. Submit the issue — the workflow **[Create PR from prompt submission](https://github.com/Mohit0/freepromptlibrary/actions/workflows/create-pr-from-issue.yml)** runs automatically
-4. Review and merge the PR when ready
-
-> **Can't see the workflow?** It only runs after an issue is submitted. Go to **Actions** in the repo and click **Create PR from prompt submission** in the left sidebar. You can also use **Run workflow** there to retry a failed submission by issue number.
-
-### One-time repo setup (maintainers)
-
-In **Settings → Actions → General → Workflow permissions**, choose **Read and write permissions** so the workflow can open pull requests.
+Use the [submit page](https://mohit0.github.io/freepromptlibrary/submit.html) to build your JSON entry, then open a pull request on GitHub with your media file. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 
 ## Local preview
 
@@ -38,8 +29,7 @@ Then open [http://localhost:8080](http://localhost:8080).
 ```
 ├── index.html              # Gallery homepage
 ├── prompt.html             # Shareable page for a single prompt
-├── submit.html             # Mobile-friendly submission guide
-├── .github/ISSUE_FORM/     # GitHub form for phone submissions
+├── submit.html             # Submission form & JSON builder
 ├── css/style.css           # Styles
 ├── js/app.js               # Gallery logic
 ├── js/submit.js            # Submission page logic
@@ -50,16 +40,15 @@ Then open [http://localhost:8080](http://localhost:8080).
 ├── submissions/template.json
 ├── scripts/
 │   ├── validate.js
-│   ├── bundle-prompts.js
-│   └── process-issue-submission.js
-└── .github/workflows/      # Deploy, validate, auto-PR
+│   └── bundle-prompts.js
+└── .github/workflows/      # Deploy + validate CI
 ```
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 
-**Quick submit:** [Open the GitHub form](https://github.com/Mohit0/freepromptlibrary/issues/new?template=prompt-submission.yml) — attach media, submit, PR is created automatically.
+**Quick submit:** Use the [submit page](https://mohit0.github.io/freepromptlibrary/submit.html) to build your entry, then open a PR on GitHub.
 
 ## GitHub Pages setup
 
